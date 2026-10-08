@@ -2,6 +2,7 @@
 const module = (title, description, fields, logic) => ({title, description, fields, logic});
 const PAGE_MODULES = {
   home: [
+    {"title": "首页滚动 Banner", "description": "首页标题下展示三张眠宝推荐卡片：健康记录、眠宝帮你、服务权益；可自动轮播、左右滑动、点击箭头或指示点切换。", "fields": "homeBanners[]：title、text、action、target、theme；homeBannerIndex、homeBannerPaused：当前会话状态。当前三项为可替换的静态配置。", "logic": "每 5 秒循环切换；点击按钮进入对应页面。离开首页清除计时器，返回重新启动；隐藏页面、焦点在轮播内、用户暂停或系统要求减少动态时不自动切换。切换仅更新轮播，不重绘页面或清空编辑内容。隐藏卡片不可获得焦点。业务活动图片、上线时间及运营配置接口待确认。"},
     module('晨起状态打卡','四档状态选择，选中后在当天保持高亮。','moods[本地日期]：四档状态之一。','同日只能提交一次；已记录时禁用四个选项。'),
     module('眠宝权益卡','根据商保状态与今日用药记录展示对应文案；点击文案进入下一步，点击眠宝切换预览状态。','insuranceStatus、meds[].day、homePreviewState。','未领取或审核中进入商保页；已领取未记录打开用药弹窗；已记录进入服药记录。'),
     module('快捷服务','药房地图、线上购药、随访管家、多元支付、用药提醒、不良反应速记、全部记录和我的专员入口。','各入口对应的目标页面。','点击入口进入对应二级页；服务待接入时展示明确状态。'),

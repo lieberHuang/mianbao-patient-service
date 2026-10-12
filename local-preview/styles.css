@@ -335,3 +335,16 @@ body { gap: clamp(12px,1.8vw,26px); padding: 12px; }
 .home-banner__arrow,.home-banner__pause { border: 0; background: none; color: #7390b5; padding: 4px; font-size: 16px; }
 .home-banner__pause { font-size: 10px; }
 @media(prefers-reduced-motion:reduce) { .home-banner__track { transition: none; } }
+/* 眠宝会话服务 */
+.chat-launchers,.conversation-tools{display:flex;gap:8px;margin:12px 0;}
+.chat-launchers button,.conversation-tools button{border:1px solid #d7e5f7;background:#fff;color:#244f86;border-radius:12px;min-height:42px;padding:9px 10px;font-size:12px;font-weight:700;cursor:pointer;flex:1;white-space:nowrap;}
+.conversation-tools{position:sticky;top:0;z-index:2;padding:8px 0;background:#f4f8ff;}
+.conversation-tools button{padding:9px 6px;font-size:11px;background:#eaf3ff;}
+.sheep-message{display:flex;align-items:flex-start;gap:7px;margin:12px 0;}
+.sheep-message>img{width:35px;height:43px;object-fit:contain;flex:none;}
+.sheep-message .bubble-chat{margin:0;min-width:0;max-width:calc(100% - 42px);line-height:1.7;}
+.article-entry{display:block;text-align:left;width:100%;border:0;border-bottom:1px solid #dde7f3;background:white;padding:14px 10px;cursor:pointer;color:var(--navy);}
+.article-entry:last-child{border-bottom:0;}.article-entry strong{display:block;font-size:13px;line-height:1.6;}.article-entry small{display:block;color:var(--muted);font-size:11px;line-height:1.6;margin:5px 0;}.article-entry span{color:var(--blue);font-size:10px;}
+.article-list{overflow:hidden;border-radius:12px;margin:9px 0;}.article-mascot,.journal-welcome,.aid-sheet-intro{display:flex;align-items:center;gap:12px;color:var(--navy);font-size:12px;line-height:1.8;margin:12px 0;}.article-mascot img,.journal-welcome img,.aid-sheet-intro img{width:70px;height:82px;object-fit:contain;}.article-paragraph{font-size:13px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;}
+.journal-date{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);}.journal-date button,.aid-progress button{border:0;background:none;color:var(--blue);cursor:pointer;}.journal-image{width:100%;max-height:240px;object-fit:contain;border-radius:10px;background:#edf3fa;margin-top:8px;}.chat-attachment{display:block;width:100%;max-height:180px;object-fit:contain;margin-top:7px;border-radius:9px;}
+.chat-upload{position:relative;display:grid;place-items:center;width:29px;height:36px;font-size:24px;color:var(--blue);flex:none;cursor:pointer;}.help-composer__row .chat-upload input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0;cursor:pointer;}.compose-images{display:flex;gap:8px;padding-bottom:8px;}.compose-images>div{position:relative;}.compose-images img{width:48px;height:48px;border-radius:7px;object-fit:cover;}.compose-images button{position:absolute;right:-4px;top:-4px;border:0;border-radius:50%;background:#365d88;color:white;width:20px;height:20px;cursor:pointer;}.page:has(.compose-images){padding-bottom:185px;}.aid-progress{font-size:11px;color:var(--muted);margin:8px 0;display:flex;justify-content:space-between;}.aid-sheet-intro+.sheet-note{margin-bottom:16px;}.sheet-body>.btn+.btn{margin-top:10px;}

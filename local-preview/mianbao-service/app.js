@@ -371,5 +371,6 @@
   // Demo deep links: index.html?order=latest or ?entry=wechat / ?entry=drug-search.
   const params=new URLSearchParams(location.search);
   if(params.has('order')){const o=latest();if(o){state.type=o.type;state.code=o.code;state.enrollment=o.code==='00'?'noApplication':o.code==='15'?'orderRejected':['10','20-pharmacy','21'].includes(o.code)?'orderReview':'approved';}render();openPayment(params.get('order')==='latest'?latest()?.id:params.get('order'));}
-  if(params.has('entry'))showToast(params.get('entry')==='wechat'?'已从公众号欢迎语进入助手':'已从一码直付药品搜索进入助手');
+  if(params.get('entry')==='recordJourney')care.beginRecord();
+  else if(params.has('entry'))showToast(params.get('entry')==='wechat'?'已从公众号欢迎语进入助手':'已从一码直付药品搜索进入助手');
 })();

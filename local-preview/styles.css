@@ -350,3 +350,23 @@ body { gap: clamp(12px,1.8vw,26px); padding: 12px; }
 @keyframes login-mianbao-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @media(prefers-reduced-motion:reduce){.login-mascot{animation:none;}}
 @media(max-height:650px){.login-mascot{height:210px;margin-top:15px;}.page--login{padding-top:22px;}.login-welcome h1{font-size:19px;}}
+
+/* Saved page feedback: scale cards and the shared disease-journey entry. */
+.scale-section__title{margin-bottom:10px}
+.scale-arrows{display:flex;gap:6px}
+.scale-arrows button{width:34px;height:34px;border:1px solid #d9e5f5;border-radius:11px;background:#fff;color:var(--blue);font-size:22px;line-height:1}
+.scale-arrows button:disabled{opacity:.35;cursor:default}
+.scale-names{display:flex;gap:8px;margin-bottom:12px}
+.scale-names button{border:1px solid #d9e5f5;border-radius:12px;background:#fff;color:#647a9b;padding:9px 15px;font-size:12px;font-weight:700}
+.scale-names button.selected{background:#e4edff;color:var(--blue);border-color:#b6cff9}
+.scale-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;padding:1px 1px 6px;position:relative}
+.scale-carousel::-webkit-scrollbar{display:none}
+.scale-carousel>.scale-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;margin-bottom:0;box-shadow:none}
+.scale-slide__head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.scale-slide__head h2{font-size:15px;margin:0}
+.scale-slide__head span{font-size:10px;color:var(--muted)}
+.app.app--journey{overflow:hidden;padding:0}
+.journey-page{display:flex;flex-direction:column;height:100%;min-height:0;background:#f5f9fc}
+.journey-page>.detail-head{margin:0;padding:14px 17px;border-bottom:1px solid var(--line);flex:none;background:#eef5ff}
+.journey-page>.mianbao-service-frame{flex:1;min-height:0;height:auto}
+.payment-status-card--applied{background:linear-gradient(125deg,#e1f3ec,#effaf5)}

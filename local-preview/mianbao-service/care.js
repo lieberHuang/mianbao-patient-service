@@ -240,13 +240,7 @@ window.createCareExperience = function(api) {
     const map={type:'先选择直付或后报销',name:'下一步：申请人姓名',region:'下一步：所在地区',phone:'下一步：联系手机号',quantity:'下一步：用药数量',images:!f.values.rx?'接下来上传处方':f.values.type==='reimburse'&&!f.values.invoice?'处方收到啦，还需要发票':'材料齐了，一起核对提交',confirm:'最后一起核对申请信息',medName:'先告诉眠宝药品名称',medDose:'接下来记录实际用药情况',medNote:'还有想补充的备注吗？',medReview:'一起核对时间与用药状态',enrollName:'先告诉眠宝患者姓名',enrollIdentity:'接下来计算年龄和性别',enrollImages:'接下来上传诊断材料',enrollConfirm:'最后核对入组资料',aeDescription:'一起确认当时的情况',aeDrug:'这次涉及什么药品？',aeConfirm:'一起核对事件信息'};
     return {text:map[f.step]||'一起核对这份资料',help:['images','enrollImages'].includes(f.step)?'点资料卡片中的上传按钮添加对应材料，确认清晰完整后继续。':['confirm','medReview','enrollConfirm','aeConfirm'].includes(f.step)?'请核对聊天里的信息，可以修改；确认无误后点保存或提交。':'从底部输入当前步骤的信息再发送。可选信息可以点“跳过”。需要使用其他功能时，直接点击对应按钮即可。',mode:'guiding'};
   }
-  function dailyMarkup(){const state=api.getState(),date=dayKey();state.dailyCheckins||={};if(!state.dailyCheckins[date]){state.dailyCheckins[date]={askedAt:new Date().toISOString()};api.save();}
-    const check=state.dailyCheckins[date],home=true;
-    const title=check.mood?'今天的感受：'+esc(check.mood):'今天感觉怎么样？';
-    const detail=check.mood?feedback[check.mood]:'选择最接近您当前的状态吧。';
-    const mascot=`<button class="companion-mascot" type="button" data-care-action="askMianbao" aria-label="让眠宝帮我"><img src="assets/mianbao-lamb.webp" alt="陪伴您的眠宝"><span>问问眠宝</span></button>`;
-    return `<section id="dailyCompanion" class="daily-companion ${home?'home-companion':''} ${check.mood||check.deferred?'answered':''}" aria-label="眠宝每日关怀"><div class="companion-story"><div>${home?`<small>眠宝陪您，一起记录每一天</small><h3>您好，我是眠宝</h3><p>您的NT1阵发性睡病助手<br>陪您了解知识、记录病程与申请福利</p>`:`<small>眠宝每日关怀</small><strong>${title}</strong><p>${detail}</p>`}</div>${mascot}</div>${home?`<div class="home-checkin-copy"><strong>${title}</strong><p>${detail}</p></div>`:''}${!check.mood&&!check.deferred?`<div class="companion-moods">${moods.map(([emoji,label])=>`<button data-care-action="dailyMood" data-value="${label}"><span>${emoji}</span>${label}</button>`).join('')}</div><button class="checkin-later" data-care-action="deferCheckin">稍后再说</button>`:''}<div class="companion-links"><button class="daily-record-button" data-care-action="dailyRecord">记录今天的感受</button>${!check.mood&&check.deferred?'<button data-care-action="openCheckin">告诉眠宝今日感受</button>':''}</div></section>`;
-  }
+  function dailyMarkup(){return `<section id="dailyCompanion" class="daily-companion home-companion" aria-label="眠宝欢迎"><div class="companion-story"><div><small>眠宝陪您，一起记录每一天</small><h3>您好，我是眠宝</h3><p>您的NT1阵发性睡病助手<br>陪您了解知识、记录病程与申请福利</p></div><button class="companion-mascot" type="button" data-care-action="askMianbao" aria-label="让眠宝帮我"><img src="assets/mianbao-lamb.webp" alt="陪伴您的眠宝"><span>问问眠宝</span></button></div></section>`;}
   function renderCompanion(){const el=$('#dailyCompanion');if(el&&['home','chat'].includes(api.getView()))el.outerHTML=dailyMarkup();}
   let imagePurpose='rx', composerKey='';
   function updateComposer(){const current=api.getActive(),active=current&&activeFlow(current),f=active?.kind==='record'?null:active;renderCompanion();const input=$('#chatInput');const nextKey=f?f.id+':'+(f.editField||f.step):'normal:'+(api.getActive()?.id||'home');if(composerKey!==nextKey){input.value=f?(f.composerDraft?.key===nextKey?f.composerDraft.value:''):(api.getActive()?.chatDraft||'');composerKey=nextKey;}
@@ -284,13 +278,9 @@ window.createCareExperience = function(api) {
     if(action==='resumeAid'||action==='freshAid')resumeAid(el.dataset.draftId,el.dataset.promptId,action==='freshAid');
     if(action==='togglePanel'){const {m}=findPanel(el.dataset.panelId);if(!m)return;captureFields();m.collapsed=!m.collapsed;if(!m.collapsed)for(const other of session().messages)if(other.kind==='appPanel'&&other.id!==m.id&&other.panelType===m.panelType)other.collapsed=true;api.save();api.renderChat();focusPanel(m.id);}
     if(action==='askMianbao'){if(busy||voiceStarting||voiceSaving)return api.showToast(guide(activeFlow()).text);const f=activeFlow();const info=guide(f);addBot(session(),'眠宝在这里。'+info.help);refresh(session());}
-    if(action==='dailyRecord'){beginRecord();const f=activeFlow(),m=api.getState().dailyCheckins?.[dayKey()]?.mood;if(m){f.values.text='今天的感受：'+m;f.directTextInput=true;refresh(session());}}
     if(action==='editRecord')editRecord(el.dataset.recordId);
     if(action==='cancelEdit'){const f=activeFlow();delete f.editField;delete f.composerDraft;clearInput();api.save();api.renderChat();}
     if(action==='clearOptional'){const f=activeFlow();f.values[f.editField]='';delete f.editField;delete f.composerDraft;clearInput();api.save();api.renderChat();}
-    if(action==='dailyMood'){const state=api.getState(),date=dayKey();if(state.dailyCheckins?.[date]?.mood)return;state.dailyCheckins[date]={...state.dailyCheckins[date],mood:el.dataset.value,answeredAt:new Date().toISOString()};api.save();const s=enterChat('今天的感受：'+el.dataset.value);push(s,{role:'bot',kind:'companionSuccess',title:'眠宝听到您的感受了',text:feedback[el.dataset.value],parts:[{text:feedback[el.dataset.value]}]});refresh(s);}
-    if(action==='deferCheckin'){api.getState().dailyCheckins[dayKey()].deferred=true;api.save();renderCompanion();}
-    if(action==='openCheckin'){api.getState().dailyCheckins[dayKey()].deferred=false;api.save();renderCompanion();}
     if(action==='aidType')submitStep(el.dataset.value);
     if(action==='sampleIdentity')submitStep('310000199404120020');
     if(action==='sampleEnrollment'){if(busy)return api.showToast('请等当前图片处理完成');const f=activeFlow();f.values.diagnosis='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(api.documentSvg('diagnosis'));api.save();api.renderChat();}

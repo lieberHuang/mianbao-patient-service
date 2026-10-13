@@ -14,7 +14,7 @@ window.createCareExperience = function(api) {
     {id:'med',category:'用药记录',title:'用药记录：留下实际发生的信息',summary:'把药品名称、时间和备注集中保存。',read:'2分钟',color:'purple',sections:[['填写实际情况','输入自己使用的药品名称和实际记录时间，可根据已有处方填写用药情况。此工具不推荐药品，也不计算或调整剂量。'],['区分记录状态','根据事实选择已服用、漏服或暂停，并填写需要向医生说明的备注。状态用于记录，不代表系统给出用药指令。'],['带着记录咨询','如果需要确认漏服处理、用药后不适或用药安排，请联系医生或专业客服。记录可以帮助您准确描述情况。']]},
     {id:'aid',category:'援助服务',title:'创新支付申请，资料怎样整理？',summary:'先核对信息，再确认处方和相关凭证。',read:'3分钟',color:'blue',sections:[['了解申请流程','演示流程包括选择直付或后报销、填写申请信息、上传材料和确认提交。真实项目的条件、材料和权益以正式规则为准。'],['上传清楚的材料','上传前核对图片种类与清晰度。演示中的后报销需要处方和发票；真实项目可能有不同材料要求。'],['查看结果','提交后到创新支付中查看进度。资料被驳回时，先查看原因，再补充相应材料。提交成功不等于审核通过或福利到账。']]},
     {id:'questions',category:'就医准备',title:'把想问医生的问题，先记下来',summary:'整理问题，减少复诊时遗漏的重要信息。',read:'2分钟',color:'green',sections:[['保留自己的疑问','想到问题时可以先在病历夹中记录，复诊前集中查看。问题应围绕自己的实际经历和已有诊疗安排。'],['关联已有资料','如有与问题相关的记录、处方或就诊材料，可以一起整理。医生会结合真实情况说明。']]},
-    {id:'organize',category:'日常记录',title:'让图片、语音与文字各归其位',summary:'给每条记录一个日期和清楚的备注。',read:'2分钟',color:'purple',sections:[['一条记录对应一个场景','尽量在一条记录中描述同一次经历。多个时间点可以分别保存，方便按时间回顾。'],['注意材料清晰度','图片要完整清晰，语音保存后可回放确认。演示数据仅保存在当前浏览器，请使用演示资料体验。']]},
+    {id:'organize',category:'日常记录',title:'让图片、语音与文字各归其位',summary:'给每条记录一个日期和清楚的备注。',read:'2分钟',color:'purple',sections:[['一条记录对应一个场景','尽量在一条记录中描述同一次经历。多个时间点可以分别保存，方便按时间回顾。'],['注意材料清晰度','图片要完整清晰，语音保存后可回放确认。']]},
   ];
   let articleFilter='全部', articleId='visit', recordsFilter='全部', records=[], dbPromise, busy=false, pageFrom='chat', recorder=null, stream=null, recordingFlow=null, recordStarted=0, voiceTimer=null, autoStop=null, voiceSaving=false, voiceStarting=false, recordPageRevision=0, resetRevision=0, dataResetRevision=0;
   const mediaUrls=new Map();
@@ -262,7 +262,7 @@ window.createCareExperience = function(api) {
   window.addEventListener('focus',renderCompanion);
   new ResizeObserver(()=>{const bottom=$('#chatBottom');$('#appBody').style.paddingBottom=bottom.hidden?'24px':bottom.offsetHeight+16+'px';}).observe($('#chatBottom'));
   function beginEnrollment(){const [s,f]=createFlow('enroll','完善入组资料',{},{});f.step='enrollName';addBot(s,'眠宝陪您整理入组资料，请先在底部填写姓名，再上传演示诊断材料。');refresh(s);}
-  function beginAE(text){const [s,f]=createFlow('ae','确认疑似不良事件',{description:text||'',drugName:'',when:localTime()});f.step='aeDescription';addBot(s,'请核对或补充当时的情况，信息只保存为本地演示记录。');refresh(s);}
+  function beginAE(text){const [s,f]=createFlow('ae','确认疑似不良事件',{description:text||'',drugName:'',when:localTime()});f.step='aeDescription';addBot(s,'请核对或补充当时的情况。');refresh(s);}
 
   async function editRecord(id){try{const r=await read('records',id);if(!r)return api.showToast('这条记录未找到，请刷新列表');const values=r.type==='med'?{when:localTime(new Date(r.when)),drugName:r.title,status:r.status,dose:r.dose||'',note:r.text||'',media:r.media||[]}:{when:localTime(new Date(r.when)),text:r.text||'',media:r.media||[]};const [s,f]=createFlow(r.type==='med'?'med':'record','修改已有'+(r.type==='med'?'用药':'病程')+'记录',values,{recordId:r.id,originalCreated:r.created});if(r.type==='med')f.step='medReview';addBot(s,'眠宝已取出这条记录。修改后保存会更新原记录，不会多出一条。');refresh(s);}catch{api.showToast('读取记录失败，请重试');}}
   const originalMessage=message;

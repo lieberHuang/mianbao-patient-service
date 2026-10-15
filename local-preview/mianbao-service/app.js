@@ -102,7 +102,7 @@
   function renderMessage(m){
     if(care&&m.kind)return care.message(m);
     if(m.role==='user')return `<div class="message user"><div class="bubble">${esc(m.text)}</div></div>`;
-    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble">${(m.parts||[]).map(p=>`<p>${p.title?`<span class="bubble-title">${esc(p.title)}</span><br>`:''}${esc(p.text)}</p>`).join('')}${(m.actions||[]).map(a=>`<button class="inline-action" data-action="${a.action}">${icon(a.icon||'card')}${esc(a.label)}</button>`).join('')}${m.ae?`<div class="ae-callout">${icon('shield')}检测到疑似不良事件描述。可确认并记录事件。<br><button class="inline-action" data-action="ae" data-report="${esc(m.ae)}">查看事件信息</button></div>`:''}</div></div>`;
+    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble">${(m.parts||[]).map(p=>`<p>${p.title?`<span class="bubble-title">${esc(p.title)}</span><br>`:''}${esc(p.text)}</p>`).join('')}${(m.actions||[]).filter(a=>a.action!=='ae').map(a=>`<button class="inline-action" data-action="${a.action}">${icon(a.icon||'card')}${esc(a.label)}</button>`).join('')}</div></div>`;
   }
   function renderChat(){
     const startAtTop=openingView||view==='home';
@@ -161,13 +161,13 @@
     const disease=/NT1|睡病|嗜睡|症状|疾病|表现|病因|复发|生活管理|饮食|检查|诊断/.test(text);
     const pharmacy=/药房|药店|购药|买药/.test(text);
     let parts=[],actions=[],intents=[];
-    if(drug){intents.push('药品相关');parts.push({title:'用药咨询',text:ae?'已识别您描述的用药后不适，正式系统会匹配安全性 FAQ，并将疑似不良事件交由专业人员评估。本演示可继续填写事件记录。':'已为您匹配“用药注意事项”演示 FAQ。正式版本会依据药企提供的知识库回答适应症、用法用量、漏服与储存等问题；当前不提供具体药品或剂量建议。'});}
+    if(drug){intents.push('药品相关');parts.push({title:'用药咨询',text:ae?'用药后如有不适，请联系医生或药师，准确说明出现的情况和实际用药信息。':'已为您匹配“用药注意事项”演示 FAQ。正式版本会依据药企提供的知识库回答适应症、用法用量、漏服与储存等问题；当前不提供具体药品或剂量建议。'});}
     if(disease){intents.push('疾病相关');parts.push({title:`${DISEASE}咨询`,text:'已匹配疾病相关知识库分类。正式版本将展示经过确认的疾病基础知识、症状、检查与日常管理 FAQ。此处用于演示检索和回答流程，不能据此判断诊断或选择治疗方案。'});}
     if(payment){intents.push('创新支付相关');parts.push({title:'创新支付服务',text:/驳回|补充|材料/.test(text)?'演示流程：打开创新支付进度卡，查看材料审核结果及原因；若材料被驳回，可点击“重新上传”，补充资料后再次提交。':'演示流程：申请入组 → 提交资料 → 审核通过 → 申请直付或后报销福利。点击下方入口可查看您当前的状态。具体 eligibility、保障范围和金额以正式项目规则为准。'.replace('eligibility','参与条件')});actions.push({label:'查看创新支付进度',action:'payment'});}
     if(pharmacy){intents.push('服务咨询');parts.push({title:'服务入口更新',text:'首页原直付药房入口已更新为病历夹，可用文字、语音和图片记录病程。直付申请中的签约药房信息仍保留在订单详情。'});actions.push({label:'打开病历夹',action:'records',icon:'doc'});}
     if(/客服|热线|人工/.test(text)){parts.push({title:'人工服务',text:'点击下方按钮可以查看客服联系方式。本演示未配置真实 400 号码。'});actions.push({label:'联系客服',action:'call',icon:'phone'});intents.push('服务咨询');}
     if(!parts.length)return {role:'bot',parts:[{text:`我可以协助您了解${DISEASE}、用药咨询与创新支付相关服务。这个问题暂不在当前知识库范围内，您可以换个相关问题，或联系人工客服。`}],actions:[{label:'联系人工客服',action:'call',icon:'phone'}],intent:'未知意图 · 固定回复'};
-    return {role:'bot',parts,actions,intent:[...new Set(intents)].join(' + '),ae:ae?text:null};
+    return {role:'bot',parts,actions,intent:[...new Set(intents)].join(' + ')};
   }
   function sendQuestion(text){
     text=text.trim();if(!text)return;if(care?.interceptText(text))return;if(typing){showToast('正在匹配上一条问题，请稍候');return;}
@@ -273,17 +273,8 @@
   }
   function refreshPharmacy(){const items=pharmacyItems();$('#mapCanvas').innerHTML=mapMarkup(items);$('#pharmacyList').innerHTML=pharmacyList(items);}
   function openCall(pharmacy=false){openSheet(pharmacy?'联系演示药房':'真人客服',`<div class="call-content"><div class="call-circle">${icon('phone')}</div><h4>${pharmacy?'药房电话尚未配置':'400客服热线待配置'}</h4><p>${pharmacy?'正式版本会使用后台维护的药房电话。':'正式版本点击后将唤起系统默认拨号功能。'}<br>本演示不拨打真实电话。</p></div>`,`<button class="primary-button" data-action="simulateCall">模拟唤起系统拨号</button>`,'call');}
-  function openAE(text){
-    pendingDraft={kind:'ae',text};
-    openSheet('疑似不良事件记录',`<div class="form-banner">已从咨询内容中识别疑似事件。请确认信息后生成演示记录；正式版本会调用 AE 平台进行分析和上报。</div><form id="aeForm"><label class="form-field"><span>关联描述</span><textarea name="description" maxlength="500" required>${esc(text)}</textarea></label><label class="form-field"><span>发生时间</span><input type="date" name="eventDate" value="${now().toLocaleDateString('en-CA')}"></label><label class="form-field"><span>药品名称（可选）</span><input name="drugName" maxlength="50" placeholder="填写演示药品名称"></label><label class="consent"><input type="checkbox" name="consent" required>我确认这是演示事件，只生成本地记录，不向实际 AE 平台发送信息。</label><div id="aeErrors" role="alert"></div></form>`,`<button class="primary-button" data-submit="aeForm">确认并生成事件记录</button>`,'ae');
-  }
-  function submitAE(){
-    const fd=new FormData($('#aeForm'));if(!String(fd.get('description')).trim()||!fd.get('consent')){$('#aeErrors').innerHTML='<p class="form-error">请填写事件描述并勾选演示说明</p>';return;}
-    const report={id:'AE-DEMO-'+Date.now(),text:String(fd.get('description')),date:String(fd.get('eventDate')),drug:String(fd.get('drugName')),created:now().toISOString()};state.reports.push(report);save();
-    openSheet('事件记录已生成',`<div class="success-view"><div class="success-illustration">${icon('shield')}</div><h4>已保存演示事件记录</h4><p>未提交至实际 AE 平台。<br>正式版本会由专业人员进一步评估。</p></div><div class="detail-card"><div class="detail-row"><span>记录编号</span><span>${esc(report.id)}</span></div><div class="detail-row"><span>描述</span><span>${esc(report.text)}</span></div><div class="detail-row"><span>记录状态</span><span>已保存至本地演示</span></div></div>`,`<button class="primary-button" data-action="done">返回咨询</button>`,'success');
-  }
   function actions(name,el){
-    const map={payment:()=>openPayment(),myService:openService,pharmacy:()=>care.openRecords(),orderPharmacy:()=>{showToast('取药药房及联系方式请查看当前订单信息');},records:()=>care.openRecords(),recordJourney:()=>care.beginRecord(),medications:()=>care.openMedications(),newMedication:()=>care.beginMedication(),education:()=>care.showEducation(),call:()=>openCall(),pharmacyCall:()=>openCall(true),enroll:()=>care.beginEnrollment(),apply:()=>care.beginAid(false),reupload:()=>care.beginAid(true),newChat:()=>{if(typing)return showToast('请等待当前回复完成');care?.beforeNavigate();ensureSession(true);view='chat';save();render();$('#chatInput').focus();},loadMore:()=>{historyLimit+=3;care.openPanel('我的服务',serviceMarkup(),'','service');},sampleRx:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('diagnosis'));$('#rxUploadLabel').textContent='示例诊断材料已就绪';},sampleAll:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('prescription'));pendingDraft.invoice='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('invoice'));$('#rxUploadLabel').textContent='示例处方材料已就绪';if($('#invoiceUploadLabel'))$('#invoiceUploadLabel').textContent='示例发票材料已就绪';},done:()=>care.collapsePanel(el.closest('[data-panel-id]')?.dataset.panelId),submittedOrder:openOrder,backToOrder:openOrder,simulateCall:()=>{showToast('已模拟唤起系统拨号，未拨打真实电话');closeModal();},locate:()=>{currentCity='上海';pharmacyQuery='';selectedPharmacy='p1';openPharmacy();showToast('已使用上海演示位置，未获取设备定位');},ae:()=>care.beginAE(el.dataset.report)};
+    const map={payment:()=>openPayment(),myService:openService,pharmacy:()=>care.openRecords(),orderPharmacy:()=>{showToast('取药药房及联系方式请查看当前订单信息');},records:()=>care.openRecords(),recordJourney:()=>care.beginRecord(),medications:()=>care.openMedications(),newMedication:()=>care.beginMedication(),education:()=>care.showEducation(),call:()=>openCall(),pharmacyCall:()=>openCall(true),enroll:()=>care.beginEnrollment(),apply:()=>care.beginAid(false),reupload:()=>care.beginAid(true),newChat:()=>{if(typing)return showToast('请等待当前回复完成');care?.beforeNavigate();ensureSession(true);view='chat';save();render();$('#chatInput').focus();},loadMore:()=>{historyLimit+=3;care.openPanel('我的服务',serviceMarkup(),'','service');},sampleRx:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('diagnosis'));$('#rxUploadLabel').textContent='示例诊断材料已就绪';},sampleAll:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('prescription'));pendingDraft.invoice='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('invoice'));$('#rxUploadLabel').textContent='示例处方材料已就绪';if($('#invoiceUploadLabel'))$('#invoiceUploadLabel').textContent='示例发票材料已就绪';},done:()=>care.collapsePanel(el.closest('[data-panel-id]')?.dataset.panelId),submittedOrder:openOrder,backToOrder:openOrder,simulateCall:()=>{showToast('已模拟唤起系统拨号，未拨打真实电话');closeModal();},locate:()=>{currentCity='上海';pharmacyQuery='';selectedPharmacy='p1';openPharmacy();showToast('已使用上海演示位置，未获取设备定位');}};
     map[name]?.();
   }
   document.addEventListener('click',e=>{
@@ -295,13 +286,13 @@
     if(el.dataset.switchOrder){selectedOrderId=el.dataset.switchOrder;openOrder();}
     if(el.dataset.session){const history=state.sessions.find(s=>s.id===el.dataset.session);if(history)care.openPanel('会话记录 · '+dateLabel(history.updated),history.messages.filter(m=>m.kind!=='appPanel').map(renderMessage).join('')||'<p>这段会话还没有消息。</p>','','history');}
     if(el.dataset.doc)showDocument(el.dataset.doc);
-    if(el.dataset.submit){if(el.dataset.submit==='aeForm')submitAE();else handleForm(el.dataset.submit);}
+    if(el.dataset.submit){handleForm(el.dataset.submit);}
     if(el.dataset.pharmacy){selectedPharmacy=el.dataset.pharmacy;refreshPharmacy();$(`[data-pharmacy-card="${selectedPharmacy}"]`)?.scrollIntoView({behavior:'smooth',block:'nearest'});}
     if(el.dataset.nav){const p=pharmacies.find(p=>p.id===el.dataset.nav);openSheet('导航路线 · 演示',`<div class="call-content"><div class="call-circle">${icon('map')}</div><h4>${p.name}</h4><p>演示位置 → ${p.city}市${p.address}<br>示例距离 ${p.distance} · 预计15分钟<br>正式版将唤起地图导航应用</p></div>`,`<button class="primary-button" data-action="pharmacy">返回药房查询</button>`,'nav');}
     if(el.dataset.type){state.type=el.dataset.type;if(!statusOptions[state.type].some(([v])=>v===state.code))state.code='20';syncLatest();closeModal();render();}
     if(el.dataset.demo){
       if(mobilePanelOverlay)closeMobilePanel();
-      const sample={multi:`${DISEASE}用药有哪些注意事项，如何申请创新支付？`,ae:'服药后出现皮疹和头晕，我想咨询一下',unknown:'帮我查一下今天的股票行情'};
+      const sample={multi:`${DISEASE}用药有哪些注意事项，如何申请创新支付？`,unknown:'帮我查一下今天的股票行情'};
       if(el.dataset.demo==='link'){view='home';state.enrollment='approved';state.code='20';syncLatest();render();openPayment(latest().id);showToast('已模拟从消息卡片进入指定订单');}else sendQuestion(sample[el.dataset.demo]);
     }
   });
@@ -331,7 +322,7 @@
     if(e.target.id==='pharmacySearch'){pharmacyQuery=e.target.value;refreshPharmacy();}
     if(e.target.name==='demoIdentity'){const result=parseIdentity(e.target.value);$('[name=age]').value=result?.age??'';$('[name=gender]').value=result?.gender??'';}
   });
-  document.addEventListener('submit',e=>{if(['enrollmentForm','applicationForm','aeForm'].includes(e.target.id)){e.preventDefault();e.target.id==='aeForm'?submitAE():handleForm(e.target.id);}});
+  document.addEventListener('submit',e=>{if(['enrollmentForm','applicationForm'].includes(e.target.id)){e.preventDefault();handleForm(e.target.id);}});
   $('#chatForm').addEventListener('submit',e=>{e.preventDefault();sendQuestion($('#chatInput').value);});
   $('#profileButton').addEventListener('click',openService);
   $('.send-button').innerHTML=icon('send');
@@ -352,7 +343,6 @@
     setSession:id=>{activeSession=id;view='chat';},
     documentSvg,parseIdentity,aidBlock,
     submitEnrollment:v=>{const before=JSON.parse(JSON.stringify(state));state.patient={name:v.name,age:v.age,gender:v.gender};state.enrollment='enrollReview';if(!save()){state=before;return false;}return true;},
-    submitCareAE:v=>{const r={id:'AE-DEMO-'+Date.now(),text:v.description,date:v.when.slice(0,10),drug:v.drugName||'',created:now().toISOString()};state.reports.push(r);if(!save()){state.reports.pop();return null;}return r;},
     submitAid:(flow)=>{
       if(aidBlock(flow.reupload,flow.orderId))return null;const before=JSON.parse(JSON.stringify(state));const v=flow.values;
       let o=flow.reupload?state.orders.find(o=>o.id===flow.orderId):null;

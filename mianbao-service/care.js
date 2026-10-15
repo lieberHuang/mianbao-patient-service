@@ -33,7 +33,7 @@ window.createCareExperience = function(api) {
   const put=(store,value)=>transact(store,'readwrite',s=>s.put(value));
   const read=(store,id)=>transact(store,'readonly',s=>s.get(id));
   function session() {return api.getActive()||api.session();}
-  function activeFlow(s=session()) {return s?.careFlows?.find(f=>f.id===s.activeCareFlowId&&f.phase==='active');}
+  function activeFlow(s=session()) {return s?.careFlows?.find(f=>f.id===s.activeCareFlowId&&f.phase==='active'&&f.kind!=='ae');}
   function push(s,message){s.messages.push(message);s.updated=new Date().toISOString();}
   function addBot(s,text,actions=[]){push(s,{role:'bot',parts:[{text}],actions,intent:'眠宝服务引导',demo:false});}
   function addSuccess(s,title,text,actions=[]){push(s,{role:'bot',kind:'companionSuccess',title,text,parts:[{text}],actions});}
@@ -46,7 +46,7 @@ window.createCareExperience = function(api) {
   function message(m) {
     if(m.kind==='aidResume'){if(m.resolved)return bot(`<p>${esc(m.resolved)}</p>`);const d=(api.getState().aidDrafts||[]).find(f=>f.id===m.draftId);return bot(`<div class="aid-resume-card">${sheep()}<div><h3>继续上次的援助申请吗？</h3><p>${d?esc(guide(d).text):'您还有一份未完成的申请。'}</p></div></div><div class="aid-resume-actions"><button type="button" class="primary-button" data-care-action="resumeAid" data-draft-id="${esc(m.draftId)}" data-prompt-id="${esc(m.id)}">继续填写</button><button type="button" class="secondary-button" data-care-action="freshAid" data-draft-id="${esc(m.draftId)}" data-prompt-id="${esc(m.id)}">重新填写</button></div>`);}
     if(m.kind==='appPanel')return panelMarkup(m);
-    if(m.kind==='companionSuccess')return bot(`<div class="mianbao-result"><img src="assets/mianbao-lamb.webp" alt="眠宝已帮您收好"><div><span class="result-check">${icon('check')} ${esc(m.title)}</span><p>${esc(m.text)}</p></div></div>${(m.actions||[]).map(a=>`<button class="inline-action" data-action="${a.action}">${esc(a.label)}</button>`).join('')}`);
+    if(m.kind==='companionSuccess')return bot(`<div class="mianbao-result"><img src="assets/mianbao-lamb.webp" alt="眠宝已帮您收好"><div><span class="result-check">${icon('check')} ${esc(m.title)}</span><p>${esc(m.text)}</p></div></div>${(m.actions||[]).filter(a=>a.action!=='ae').map(a=>`<button class="inline-action" data-action="${a.action}">${esc(a.label)}</button>`).join('')}`);
     if(m.kind==='uploadedMaterial'){const f=session().careFlows?.find(f=>f.id===m.flowId);return `<div class="message user"><div class="bubble">${esc(m.text)}${m.media?.length?m.media.map(item=>`<button class="image-attachment" data-care-action="previewMedia" data-media-id="${esc(item.id)}"><img class="uploaded-chat-image" data-media="${esc(item.id)}" alt="${esc(m.text)}"></button>`).join(''):f?.values[m.purpose]?`<img class="uploaded-chat-image" src="${esc(f.values[m.purpose])}" alt="${esc(m.text)}">`:''}</div></div>`;}
     if(m.kind==='articles')return bot(`<span class="bubble-title">眠宝为您整理了这些文章</span><p class="article-intro">先从记录与资料整理开始，慢慢了解自己的每一天。</p><div class="article-list">${articleCards()}</div><button class="view-more" data-care-action="articles">查看更多</button>`);
     if(m.kind==='recordInput')return `<div class="message user"><div class="bubble record-input-card"><div class="record-input-heading">${icon('doc')}病程记录 · ${m.media?.some(x=>x.kind==='audio')?'语音':m.media?.length?'图片':'文字'}</div>${m.text?`<p class="record-input-text">${esc(m.text)}</p>`:''}${mediaMarkup(m.media||[])}</div></div>`;
@@ -148,11 +148,7 @@ window.createCareExperience = function(api) {
       if(f.step==='enrollName'||f.step==='enrollIdentity'){content=`<p>${f.step==='enrollName'?'请在底部输入患者姓名。':'请在底部输入18位演示身份号码，用于计算年龄和性别。'}</p>${f.step==='enrollIdentity'?'<button type="button" class="secondary-button" data-care-action="sampleIdentity">使用演示号码</button>':''}`;allowSubmit=false;}
       else if(f.step==='enrollImages'){content=uploadSummary(v,['diagnosis'])+materialButtons(v,true)+'<button type="button" class="secondary-button" data-care-action="sampleEnrollment">使用演示材料</button>';button='材料已就绪，继续';}
       else{content=`${field('姓名',v.name)}${field('年龄 / 性别',v.age+'岁 / '+v.gender)}${field('疾病','NT1阵发性睡病')}<label class="consent"><input type="checkbox" name="careConsent">我确认本次只提交演示资料。</label>`;button='提交入组资料';}
-    }else if(f.kind==='ae'){
-      title='疑似不良事件记录';
-      if(f.step==='aeDescription'){content=`<p>${esc(v.description||'请在底部描述当时的情况。')}</p>`;button='确认描述';}
-      else if(f.step==='aeDrug'){content='<p>请在底部填写相关药品名称（可选）。</p>';button='跳过药品名称';}
-      else{content=`${field('描述',v.description)}${edit('修改描述','description')}${field('药品',v.drugName||'未填写')}${edit('修改药品','drugName')}${field('时间',dateText(v.when))}${edit('修改时间','when')}<label class="consent"><input type="checkbox" name="careConsent">仅生成演示记录，不上报真实平台。</label>`;button='确认保存事件';}
+
     }
     return bot(`<form id="careFlowForm" novalidate data-flow="${f.id}"><div class="care-flow-progress">${title}</div>${content}<div id="careFlowError" role="alert"></div>${f.editField?`<div class="edit-notice">正在修改${esc(fieldName(f.editField))}，请从底部发送。<button type="button" data-care-action="cancelEdit">取消修改</button>${['dose','note','drugName'].includes(f.editField)&&!(f.kind==='med'&&f.editField==='drugName')?'<button type="button" data-care-action="clearOptional">清空此项</button>':''}</div>`:allowSubmit?`<button type="submit" class="primary-button">${button}</button>`:''}</form>`);
   }
@@ -185,11 +181,6 @@ window.createCareExperience = function(api) {
       if(f.step==='enrollIdentity'){const identity=api.parseIdentity(value);if(!identity)return error('请输入含有效生日的18位演示号码');Object.assign(v,identity);accepted(s,'年龄和性别已计算：'+identity.age+'岁 / '+identity.gender);f.step='enrollImages';refresh(s);return;}
       if(f.step==='enrollImages'){if(!v.diagnosis)return error('请从底部上传诊断材料');f.step='enrollConfirm';refresh(s);return;}
       if(!fd?.get('careConsent'))return error('请勾选演示说明');if(!api.submitEnrollment(v))return error('入组保存失败，请重试');f.phase='completed';clearInput(f);addSuccess(s,'入组资料已收好','入组资料已收到，正在审核。',[{label:'查看进度',action:'payment'}]);refresh(s);return;
-    }
-    if(f.kind==='ae'){
-      if(f.step==='aeDescription'){if(value)v.description=value;if(!v.description)return error('请填写事件描述');accepted(s,value||'确认当前事件描述');f.step='aeDrug';refresh(s);return;}
-      if(f.step==='aeDrug'){v.drugName=value;accepted(s,value||'暂不填写药品');f.step='aeConfirm';refresh(s);return;}
-      if(!fd?.get('careConsent'))return error('请勾选演示说明');const report=api.submitCareAE(v);if(!report)return error('保存失败，请重试');f.phase='completed';clearInput(f);addSuccess(s,'事件记录已收好','已保存演示事件 '+report.id+'，未上报真实平台。');refresh(s);return;
     }
     if(f.kind==='med'){
       if(f.step==='medName'){if(!value||value.length>60)return error('请填写1–60字的药品名称');v.drugName=value;accepted(s,value);f.step='medDose';refresh(s);return;}
@@ -262,7 +253,6 @@ window.createCareExperience = function(api) {
   window.addEventListener('focus',renderCompanion);
   new ResizeObserver(()=>{const bottom=$('#chatBottom');$('#appBody').style.paddingBottom=bottom.hidden?'24px':bottom.offsetHeight+16+'px';}).observe($('#chatBottom'));
   function beginEnrollment(){const [s,f]=createFlow('enroll','完善入组资料',{},{});f.step='enrollName';addBot(s,'眠宝陪您整理入组资料，请先在底部填写姓名，再上传演示诊断材料。');refresh(s);}
-  function beginAE(text){const [s,f]=createFlow('ae','确认疑似不良事件',{description:text||'',drugName:'',when:localTime()});f.step='aeDescription';addBot(s,'请核对或补充当时的情况。');refresh(s);}
 
   async function editRecord(id){try{const r=await read('records',id);if(!r)return api.showToast('这条记录未找到，请刷新列表');const values=r.type==='med'?{when:localTime(new Date(r.when)),drugName:r.title,status:r.status,dose:r.dose||'',note:r.text||'',media:r.media||[]}:{when:localTime(new Date(r.when)),text:r.text||'',media:r.media||[]};const [s,f]=createFlow(r.type==='med'?'med':'record','修改已有'+(r.type==='med'?'用药':'病程')+'记录',values,{recordId:r.id,originalCreated:r.created});if(r.type==='med')f.step='medReview';addBot(s,'眠宝已取出这条记录。修改后保存会更新原记录，不会多出一条。');refresh(s);}catch{api.showToast('读取记录失败，请重试');}}
   const originalMessage=message;
@@ -313,8 +303,8 @@ window.createCareExperience = function(api) {
     }catch(e){for(const id of addedIds)await transact('media','readwrite',s=>s.delete(id)).catch(()=>{});error(e.message||'附件保存失败，请重试');}finally{busy=false;el.value='';updateComposer();}
   });
   window.addEventListener('pagehide',()=>stopVoice(true));
-  function prepareInitialView(){let changed=false;for(const s of api.getState().sessions)for(const f of s.careFlows||[])if(f.phase==='active'){if(f.kind==='aid'){f.phase='paused';rememberAid(f);changed=true;}else if(f.kind==='record'){f.phase='cancelled';changed=true;}}if(changed)api.save();}
+  function prepareInitialView(){let changed=false;for(const s of api.getState().sessions)for(const f of s.careFlows||[])if(f.phase==='active'){if(f.kind==='aid'){f.phase='paused';rememberAid(f);changed=true;}else if(f.kind==='record'||f.kind==='ae'){f.phase='cancelled';changed=true;}}if(changed)api.save();}
   function clearChats(){const state=api.getState();for(const s of state.sessions)for(const f of s.careFlows||[])if(f.kind==='aid'&&['active','paused','cancelled'].includes(f.phase))rememberAid(f);resetRevision++;recordPageRevision++;stopVoice(true);$('#chatInput').value='';composerKey='';}
   async function reset(){resetRevision++;dataResetRevision++;recordPageRevision++;stopVoice(true);clearInput();composerKey='';try{await transact('records','readwrite',s=>s.clear());await transact('media','readwrite',s=>s.clear());for(const url of mediaUrls.values())URL.revokeObjectURL(url);mediaUrls.clear();records=[];}catch{}}
-  return {dailyMarkup,openPanel,collapsePanel,message:richMessage,flowMarkup,hydrate,showEducation,openRecords,openMedications,beginRecord,beginMedication,beginAid,beforeNavigate:()=>stopVoice(false),prepareInitialView,clearChats,interceptText,updateComposer,clearComposer:clearInput,beginEnrollment,beginAE,reset};
+  return {dailyMarkup,openPanel,collapsePanel,message:richMessage,flowMarkup,hydrate,showEducation,openRecords,openMedications,beginRecord,beginMedication,beginAid,beforeNavigate:()=>stopVoice(false),prepareInitialView,clearChats,interceptText,updateComposer,clearComposer:clearInput,beginEnrollment,reset};
 };

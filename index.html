@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#e9f2ff" />
   <title>眠宝 · 患者服务</title>
-  <link rel="stylesheet" href="styles.css?v=merged-journey-20261015" />
+  <link rel="stylesheet" href="styles.css?v=home-med-record-20261015" />
 </head>
 <body>
   <aside id="requirement-panel" class="requirement-panel" aria-label="当前页面需求描述" aria-live="polite"></aside>
@@ -19,7 +19,8 @@
   <button id="feedback-toggle" class="feedback-toggle" type="button" aria-controls="feedback-panel" aria-expanded="false">修改意见</button>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script id="page-feedback-data" type="application/json">{"home":{"text":"首页的banner和下面状态选择卡片互相调换位置；\n快捷服务中新增一个模块“病程记录”，点击后能够使用文字/图片/录音记录自身的病程","updatedAt":"2026-10-13T09:35:14.502490+00:00","appliedAt":"2026-10-13T10:00:52.163544+00:00"},"pharmacy":{"text":"药房地图底部不展示tab栏；\n进入该模块底部弹出弹窗授权获取患者当前位置；\n上方放置根据用户当前位置所在的地图，下方弹窗展示附近的药店；","updatedAt":"2026-09-29T07:53:32.153941+00:00","appliedAt":"2026-09-29T08:16:36.530738+00:00"},"shop":{"text":"页面展示“待接入”三个字","updatedAt":"2026-09-29T07:53:51.566838+00:00","appliedAt":"2026-09-29T08:16:36.530740+00:00"},"special":{"text":"“专病管理”底部按钮名称修改为“健康档案”；\n测评记录里面展示全部量表名称，卡片支持左右滑动；\n睡眠辅助工具下只保留“小憩闹钟”/“注意力挑战”/“睡眠日子”","updatedAt":"2026-10-15T02:38:28.137214+00:00"},"eventForm":{"text":"“有跌倒或受伤”移除；","updatedAt":"2026-09-29T07:54:59.822349+00:00","appliedAt":"2026-09-29T08:16:36.530743+00:00"},"rights":{"text":"新增一个banner位用于展示自动滚动的banner；\n在banner与“多元支付与保障”中间新增一张卡片用于展示当前用户的创新支付状态：\n1.未申请；\n2.审核中；\n3.已通过/已拒绝；\n这张卡片需要展示眠宝的形象；","updatedAt":"2026-09-30T08:08:30.775186+00:00","appliedAt":"2026-10-14T09:33:52.637667+00:00","appliedNote":"2026-10-14 按最新要求改为知识中心：展示患教文章分类、列表和详情；旧权益中心意见保留作为历史记录。"},"mine":{"text":"页面样式优化一下，特别是眠宝形象；\n新增“设置”功能，参考市面上通用的小程序设置，包含消息通知提醒/用户协议查看/退出登录/注销等功能；","updatedAt":"2026-09-29T08:33:15.882872+00:00","appliedAt":"2026-09-29T08:47:16.577567+00:00"}}</script>
-  <script id="page-description-data" type="application/json">{
+  <script id="page-description-data" type="application/json">
+{
   "home": {
     "title": "患者首页",
     "group": "首页",
@@ -54,7 +55,7 @@
       },
       {
         "title": "快捷服务",
-        "description": "六个入口：病程记录、药房地图、线上购药、患者福利、用药提醒和我的专员。",
+        "description": "六个入口：病程记录、药房地图、线上购药、患者福利、用药记录和我的专员。",
         "fields": "journey、pharmacy、shop、payment、medReminder、specialist。",
         "logic": "语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。"
       },
@@ -1453,11 +1454,12 @@
     "data": "allJourneyRecords()；journeyHistoryFilter=全部/图片/语音；id、updatedAt/createdAt、images、originalText、facts。\nlegacy.kind/id；voice:旧ID、image:旧ID；route.caseId；journeyDrafts[recordId]。",
     "logic": "全部按稳定ID去重；混合记录在图片和语音分类中均显示，但总条数只计一次。没有次数显示未提及，不将其视为0次。列表只显示已成功保存记录，不计草稿。不展示新增语音病历按钮。\n只读映射旧数组，不破坏原始历史；覆盖修改以相同稳定ID写新数组，合并读取时新值优先，避免双份显示。回看不重新调用提取，不重算相对日期；未保存编辑可从草稿恢复。顶端返回回到来源页面。"
   }
-}</script>
-  <script src="requirements.js?v=merged-journey-20261015"></script>
-  <script src="modules.js?v=merged-journey-20261015"></script>
-  <script src="knowledge.js?v=merged-journey-20261015"></script>
-  <script src="journey-records.js?v=merged-journey-20261015"></script>
-  <script src="app.js?v=merged-journey-20261015"></script>
+}
+</script>
+  <script src="requirements.js?v=home-med-record-20261015"></script>
+  <script src="modules.js?v=home-med-record-20261015"></script>
+  <script src="knowledge.js?v=home-med-record-20261015"></script>
+  <script src="journey-records.js?v=home-med-record-20261015"></script>
+  <script src="app.js?v=home-med-record-20261015"></script>
 </body>
 </html>

@@ -331,7 +331,7 @@ function home(){
     </section>
     ${homeBannerMarkup()}
     <div class="section-title">快捷服务</div>
-    ${card(`<div class="quick-grid">${quick('✎','病程记录','journey')}${quick('📍','药房地图','pharmacy')}${quick('💊','线上购药','shop')}${quick('🛡','患者福利','payment')}${quick('⏰','用药提醒','medReminder')}${quick('👩‍⚕️','我的专员','specialist')}</div>`)}
+    ${card(`<div class="quick-grid">${quick('✎','病程记录','journey')}${quick('📍','药房地图','pharmacy')}${quick('💊','线上购药','shop')}${quick('🛡','患者福利','payment')}${quick('⏰','用药记录','medReminder')}${quick('👩‍⚕️','我的专员','specialist')}</div>`)}
     <div class="section-title">今日任务</div>
     <button class="task" data-action="openMedGuide"><span class="taskicon">💊</span><span class="taskbody"><strong>今日用药</strong><small>${hasToday(state.meds)?'已记录 · 查看今日用药':'计划时间 '+state.settings.medTime+' · 点击打卡'}</small></span><span class="arrow">›</span></button>
     <button class="task" data-action="openNapGuide"><span class="taskicon">⏰</span><span class="taskbody"><strong>日常小憩时钟</strong><small id="homeNapSummary">${napTaskCopy()}</small></span><span class="arrow">›</span></button>

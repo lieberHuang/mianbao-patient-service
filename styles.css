@@ -200,10 +200,10 @@ body { gap: clamp(12px,1.8vw,26px); padding: 12px; }
 .month-summary__text strong { display: block; margin-top: 4px; font-size: 24px; color: var(--blue); }
 .month-summary__text p { margin: 4px 0 6px; color: #375379; font-size: 11px; line-height: 1.5; }
 .month-summary__text span { color: #8295b2; font-size: 9px; }
-.month-summary button { position: absolute; right: 0; bottom: 0; width: 119px; height: 142px; padding: 0; border: 0; background: none; }
-.month-summary button img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 6px 8px rgba(73,106,153,.17)); }
-.month-summary--up button img { transform: rotate(5deg); }
-.month-summary--down button img { transform: rotate(-5deg); }
+.month-summary .month-summary__mascot { position: absolute; right: 0; bottom: 0; width: 119px; height: 142px; padding: 0; border: 0; background: none; }
+.month-summary .month-summary__mascot img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 6px 8px rgba(73,106,153,.17)); }
+.month-summary--up .month-summary__mascot img { transform: rotate(5deg); }
+.month-summary--down .month-summary__mascot img { transform: rotate(-5deg); }
 .row--compact .rowbody strong { font-size: 13px; }
 .page--mine { background: linear-gradient(180deg,#e6f1ff,#f2f7ff 330px); }
 .mine-profile { position: relative; min-height: 179px; overflow: hidden; border-radius: 21px; padding: 24px 16px; background: linear-gradient(125deg,#dcecff,#c7dcff); box-shadow: var(--shadow); }
@@ -583,3 +583,20 @@ body { gap: clamp(12px,1.8vw,26px); padding: 12px; }
 .journey-mode-option strong{display:block;font-size:15px;margin-bottom:6px}.journey-mode-option small{display:block;font-size:10px;color:var(--muted);line-height:1.5}
 .journey-mode-option b{margin-left:auto;font-size:24px;color:#89a4cc;font-weight:400}.journey-switch-mode{padding-left:0;margin-top:5px}
 .journey-record-source{display:block;color:#6b7f9f;font-size:11px;margin:0 0 7px}
+
+/* Benefit status badge and concise record review. */
+.quick{position:relative}.quick-badge{position:absolute;top:-5px;left:calc(50% + 5px);padding:3px 6px;white-space:nowrap;border:1px solid #ffdcc6;border-radius:9px 9px 9px 2px;background:#fff0e5;color:#b7622a;font-size:8px;line-height:1.3;font-weight:650;z-index:1}
+.journey-key-fields .form-field:first-child{margin-top:0}.journey-key-fields .form-field:last-child{margin-bottom:0}.journey-key-fields .journey-description{min-height:130px;color:#c4323c;line-height:1.85}.document-history-item>div>strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+
+/* Record-based scale trends and monthly footer action. */
+.month-summary__actions .btn{min-height:38px;padding:10px 16px}
+.scale-card .scale-record-chart{margin-top:15px;margin-bottom:18px}
+.scale-record-chart .barcol{min-width:0}.scale-record-chart .barcol small{font-size:9px;white-space:nowrap}
+.scale-trend-empty{min-height:138px;display:grid;place-items:center}
+.mine-profile small{overflow-wrap:anywhere}
+
+/* Current medication choices in the patient archive. */
+.archive-drug-field{border:0;padding:0;margin:19px 0 15px;min-width:0}.archive-drug-field legend{font-size:12px;font-weight:700;padding:0;margin-bottom:11px}.archive-drug-field legend span{font-size:10px;color:var(--muted);font-weight:400;margin-left:6px}
+.archive-drug-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.archive-drug-card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:61px;border:1px solid #dce6f5;border-radius:14px;padding:12px 11px;background:#f7faff;font-size:12px;line-height:1.55;cursor:pointer}
+.archive-drug-card input{position:absolute;opacity:0;width:1px;height:1px}.archive-drug-card i{display:grid;place-items:center;flex:none;width:17px;height:17px;border:1px solid #c8d6ed;border-radius:6px;color:transparent;font-size:11px;font-style:normal}.archive-drug-card:has(input:checked){border-color:var(--blue);background:#eaf1ff;color:#2255b4}.archive-drug-card:has(input:checked) i{border-color:var(--blue);background:var(--blue);color:white}.archive-drug-card:has(input:focus-visible){outline:2px solid #5986e1;outline-offset:3px}.archive-drug-card--none{grid-column:1/-1;min-height:52px}

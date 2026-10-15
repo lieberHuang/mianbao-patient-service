@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#e9f2ff" />
   <title>眠宝 · 患者服务</title>
-  <link rel="stylesheet" href="styles.css?v=record-method-feedback-20261015" />
+  <link rel="stylesheet" href="styles.css?v=archive-drug-cards-20261015" />
 </head>
 <body>
   <aside id="requirement-panel" class="requirement-panel" aria-label="当前页面需求描述" aria-live="polite"></aside>
@@ -18,102 +18,50 @@
   <aside id="feedback-panel" class="feedback-panel" aria-label="当前页面修改意见"></aside>
   <button id="feedback-toggle" class="feedback-toggle" type="button" aria-controls="feedback-panel" aria-expanded="false">修改意见</button>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script id="page-feedback-data" type="application/json">
-{
-  "home": {
-    "text": "建立您的健康档案弹窗中右上角的关闭按钮移除；\n\nbanner滚动条旁边的“暂停”按钮移除；\n\n“快捷服务”改为“NT1专区”",
-    "updatedAt": "2026-10-15T05:26:18.371373+00:00",
-    "appliedAt": "2026-10-15T05:28:24.882302+00:00",
-    "appliedNote": "本地完成：建档弹窗移除右上角关闭按钮；Banner移除暂停按钮，保留自动轮播、箭头、指示点和滑动；快捷服务改为NT1专区。左侧模块说明同步。"
-  },
-  "pharmacy": {
-    "text": "药房地图底部不展示tab栏；\n进入该模块底部弹出弹窗授权获取患者当前位置；\n上方放置根据用户当前位置所在的地图，下方弹窗展示附近的药店；",
-    "updatedAt": "2026-09-29T07:53:32.153941+00:00",
-    "appliedAt": "2026-09-29T08:16:36.530738+00:00"
-  },
-  "shop": {
-    "text": "页面展示“待接入”三个字",
-    "updatedAt": "2026-09-29T07:53:51.566838+00:00",
-    "appliedAt": "2026-09-29T08:16:36.530740+00:00"
-  },
-  "special": {
-    "text": "“今日记录”次数移除，仅展示本月已记录次数；",
-    "updatedAt": "2026-10-15T05:27:47.168720+00:00",
-    "appliedAt": "2026-10-15T05:34:22.664227+00:00",
-    "appliedNote": "本地完成：移除今日次数，仅展示本月已记录猝倒次数；快速记录及周趋势保留。左侧模块说明同步，交互检查通过。"
-  },
-  "eventForm": {
-    "text": "“有跌倒或受伤”移除；",
-    "updatedAt": "2026-09-29T07:54:59.822349+00:00",
-    "appliedAt": "2026-09-29T08:16:36.530743+00:00"
-  },
-  "mine": {
-    "text": "页面样式优化一下，特别是眠宝形象；\n新增“设置”功能，参考市面上通用的小程序设置，包含消息通知提醒/用户协议查看/退出登录/注销等功能；",
-    "updatedAt": "2026-09-29T08:33:15.882872+00:00",
-    "appliedAt": "2026-09-29T08:47:16.577567+00:00"
-  },
-  "login": {
-    "text": "“眠宝｜患者服务”修改为“眠宝｜NT1阵发性睡眠服务平台”；\n“眠宝陪您，记录每一天”修改为“眠宝陪您，安睡每一天”；\n“立即登录”前面的图标移除；",
-    "updatedAt": "2026-10-15T05:26:00.035985+00:00",
-    "appliedAt": "2026-10-15T05:28:24.882302+00:00",
-    "appliedNote": "本地完成：品牌改为眠宝｜NT1阵发性睡眠服务平台；欢迎语改为眠宝陪您，安睡每一天；立即登录按钮仅保留文字。左侧模块说明同步。"
-  },
-  "journey": {
-    "text": "进入模块后先唤起底部弹窗选择是使用语音记录还是上传图片记录，然后再展示对应记录方式页面",
-    "updatedAt": "2026-10-15T05:28:59.799309+00:00",
-    "appliedAt": "2026-10-15T05:34:22.664227+00:00",
-    "appliedNote": "本地完成：新建先展示底部方式选择，语音/图片分别进入对应录入页；可切换补充且保留资料、人工修改；草稿和历史直接恢复方式。左侧模块说明同步，交互检查通过。"
-  },
-  "journeyHistory": {
-    "text": "病程记录列表不用tag区分类型，在记录卡片上展示即可",
-    "updatedAt": "2026-10-15T05:29:24.535747+00:00",
-    "appliedAt": "2026-10-15T05:34:22.664227+00:00",
-    "appliedNote": "本地完成：移除顶部全部/图片/语音筛选标签，统一列表；卡片用普通文字显示记录方式，混合记录仅显示一次。左侧模块说明同步，交互检查通过。"
-  }
-}
-</script>
+  <script id="page-feedback-data" type="application/json">{"home":{"text":"状态选择卡片对应不同状态下的按钮都删掉：“记录今日用药”/“查看服药记录”/“查看审核状态”","updatedAt":"2026-10-15T07:10:21.884841+00:00","appliedAt":"2026-10-15T07:14:01.643056+00:00","appliedNote":"本地完成：状态选择卡片在所有状态下统一为静态反馈，移除记录今日用药/查看服药记录/查看审核状态及对应点击动作，保留眠宝状态切换和NT1专区。左侧模块同步。"},"pharmacy":{"text":"药房地图底部不展示tab栏；\n进入该模块底部弹出弹窗授权获取患者当前位置；\n上方放置根据用户当前位置所在的地图，下方弹窗展示附近的药店；","updatedAt":"2026-09-29T07:53:32.153941+00:00","appliedAt":"2026-09-29T08:16:36.530738+00:00"},"shop":{"text":"页面展示“待接入”三个字","updatedAt":"2026-09-29T07:53:51.566838+00:00","appliedAt":"2026-09-29T08:16:36.530740+00:00"},"special":{"text":"“本月已记录猝倒事件”卡片的“快速记录”按钮位置在卡片底部；\n“测评与拍照记录”小字删除，“本周分数”小字删除；\n量表趋势图不按照自然周来，按照最近的七次记录展示，横坐标为月/日；","updatedAt":"2026-10-15T07:08:38.496828+00:00","appliedAt":"2026-10-15T07:14:01.643056+00:00","appliedNote":"本地完成：快速记录按钮置于月度卡片底部独立区域，修复旧定位样式覆盖；移除本周分数和测评与拍照记录说明，ESS/SRSS分别展示最近七次有效得分，横坐标月/日，同日多次不合并、0分保留、无得分不补零。左侧字段逻辑同步。"},"eventForm":{"text":"“有跌倒或受伤”移除；","updatedAt":"2026-09-29T07:54:59.822349+00:00","appliedAt":"2026-09-29T08:16:36.530743+00:00"},"login":{"text":"“眠宝｜患者服务”修改为“眠宝｜NT1阵发性睡眠服务平台”；\n“眠宝陪您，记录每一天”修改为“眠宝陪您，安睡每一天”；\n“立即登录”前面的图标移除；","updatedAt":"2026-10-15T05:26:00.035985+00:00","appliedAt":"2026-10-15T05:28:24.882302+00:00","appliedNote":"本地完成：品牌改为眠宝｜NT1阵发性睡眠服务平台；欢迎语改为眠宝陪您，安睡每一天；立即登录按钮仅保留文字。左侧模块说明同步。"},"journey":{"text":"关键信息中“提取示例”tag删掉，仅展示对应提取到的关键信息：时间/描述","updatedAt":"2026-10-15T05:43:47.097204+00:00","appliedAt":"2026-10-15T05:49:21.085862+00:00","appliedNote":"本地完成：关键信息移除提取示例及手动核对标签，仅展示可编辑时间和描述；描述草稿、保存、列表回看及人工修改优先保留同步。左侧字段与逻辑说明同步。"},"journeyHistory":{"text":"病程记录列表不用tag区分类型，在记录卡片上展示即可","updatedAt":"2026-10-15T05:29:24.535747+00:00","appliedAt":"2026-10-15T05:34:22.664227+00:00","appliedNote":"本地完成：移除顶部全部/图片/语音筛选标签，统一列表；卡片用普通文字显示记录方式，混合记录仅显示一次。左侧模块说明同步，交互检查通过。"},"specialist":{"text":"“正式上线后，”删掉；\n“二维码待配置”删掉","updatedAt":"2026-10-15T05:38:58.510947+00:00","appliedAt":"2026-10-15T05:49:21.085862+00:00","appliedNote":"本地完成：移除正式上线后前缀与二维码待配置文字，保留专员引导及二维码区域。左侧字段与逻辑说明同步。"},"rights":{"text":"发布时间修改为年月日；\n文章卡片不要副标题；\n箭头图标移除；","updatedAt":"2026-10-15T05:46:45.497182+00:00","appliedAt":"2026-10-15T05:53:20.901020+00:00","appliedNote":"本地完成：文章卡片去除副标题及箭头，使用用户确认的固定示例发布日期2026-10-15，以年月日格式展示；详情日期同源，分类筛选与返回保留。左侧说明同步。"},"profile":{"text":"“清除记录”按钮删除；","updatedAt":"2026-10-15T05:49:22.934627+00:00","appliedAt":"2026-10-15T05:53:20.901020+00:00","appliedNote":"本地完成：个人资料移除清除记录按钮，保留档案查看与建立/修改入口及原有数据。左侧模块同步。"},"mine":{"text":"“体验用户”改为“一串用户ID”","updatedAt":"2026-10-15T07:09:08.683616+00:00","appliedAt":"2026-10-15T07:14:01.643056+00:00","appliedNote":"本地完成：体验用户替换为持久化用户ID；已有ID复用，刷新及退出重进保持一致。左侧字段和正式账号接口说明同步。"},"patientArchive":{"text":"当前使用药物为卡片按钮选择样式，给予一些常见药物选择，最后一个选择为“暂无用药”","updatedAt":"2026-10-15T07:26:38.982518+00:00","appliedAt":"2026-10-15T07:31:34.113051+00:00","appliedNote":"本地完成：当前使用药物改为卡片多选，增加常见药物及其他药物选项，最后固定暂无用药且互斥；支持其他名称填写、保存回填、旧文字档案兼容与失败回滚。左侧模块字段逻辑同步。"}}</script>
   <script id="page-description-data" type="application/json">
 {
   "home": {
     "title": "患者首页",
     "group": "首页",
     "origin": "图示页面",
-    "goal": "让患者在首页的一张卡片中记录晨起状态、看到眠宝反馈，并快速找到今日任务与NT1专区。",
+    "goal": "在首页记录晨起状态、查看眠宝反馈，并通过推荐内容和NT1专区进入服务。",
     "interactions": [
       "先展示晨起状态及眠宝权益卡，再展示推荐 Banner。",
-      "今日用药和小憩的引导弹窗及计时逻辑保持现状。",
       "语音病历与病程记录合并为一个入口，统一图片/语音录入、编辑、保存及历史回看。",
       "建档提示弹窗右上角不展示关闭按钮；建立档案与稍后再说保留。",
       "Banner不展示暂停按钮，仍支持自动轮播、箭头、指示点及滑动。",
-      "首页快捷服务区域标题改为NT1专区，六个入口及目标页面保持现有配置。"
+      "首页快捷服务区域标题改为NT1专区，六个入口及目标页面保持现有配置。",
+      "首页移除今日任务整块区域及其今日用药、日常小憩时钟卡片。",
+      "眠宝反馈在所有状态下均为静态文字，移除记录今日用药、查看服药记录、查看审核状态等按钮；六项快捷服务保留。"
     ],
-    "data": "onboardingPending、patientArchive；目标 patientArchive。\n当前字段补齐：insuranceStatus、meds[].day、homePreviewState。\n建议申请字段（待确认）：applicationId、applicationStatus、benefitStatus、updatedAt、rejectReason。\nhomeBanners[]：title、text、action、target、theme；bannerStates.home：index。\njourney、pharmacy、shop、payment、medReminder、specialist。\njourney/journeyHistory；journeyRecords[]、journeyDrafts；旧 voiceCases/documentCases 兼容读取。\nsettings.medTime；meds[]：id、time、day、note；动效 assets/mianbao-med-guide.gif。\nnapSession：id、day、startedAt、totalSeconds、remainingSeconds、endsAt、status(running/paused/finished)；时长 1—120 整数分钟；naps[]：id、day、time、minutes；动效 assets/mianbao-nap-guide.gif。\nmoods[本地日期]：四档状态之一。\n建议正式字段（待确认）：userId、recordDate、moodCode、createdAt、updatedAt；recordDate 按选定业务时区生成。",
+    "data": "onboardingPending、patientArchive；目标 patientArchive。\n当前字段补齐：insuranceStatus、meds[].day、homePreviewState。\n建议申请字段（待确认）：applicationId、applicationStatus、benefitStatus、updatedAt、rejectReason。\nhomeBanners[]：title、text、action、target、theme；bannerStates.home：index。\njourney、pharmacy、shop、payment、medReminder、specialist。\n角标来自paymentSummary().label；insuranceStatus=unclaimed/reviewing/applied/claimed/rejected。\njourney/journeyHistory；journeyRecords[]、journeyDrafts；旧 voiceCases/documentCases 兼容读取。\nmoods[本地日期]：四档状态之一。\n建议正式字段（待确认）：userId、recordDate、moodCode、createdAt、updatedAt；recordDate 按选定业务时区生成。",
     "pending": "正式药品名、任务计划、消息提醒和外部服务入口需业务方确认。",
-    "logic": "点击建立档案进入两字段表单；点击稍后再说或遮罩关闭提示，已有档案不展示。刷新时未处理的提示保留；不影响首页原任务与服务。\n未领取或审核中进入商保页；已领取未记录打开用药弹窗；已记录进入服药记录。\n\n【A02/D01｜现状】未领取/审核中进入 payment；已领取且今日无记录打开服药弹窗；已记录进入 med。点击眠宝可覆盖展示状态，不改变申请数据。\n【建议规则（待确认）】申请状态与权益可用状态分别保存；approved 只有经权益接口确认可用后才映射“已领取”。审核拒绝显示拒绝原因及重申入口，不能映射已领取。状态成功刷新后统一重算首页与支付详情。\n【待确认】未申请/审核中/已通过/已拒绝分别对应的首页文案、按钮、跳转；通过后是否需激活；多个申请取哪一份；申请服务、失效规则。临时展示状态不作为真实办理依据，正式版是否保留点击切换需确认。\n页面顺序为顶部问候→晨起状态和眠宝权益卡→Banner→NT1专区→今日任务。轮播每 5 秒循环；离开页面清除计时器，页面隐藏、轮播内有焦点或系统要求减少动态时暂停。仅更新轮播区域，不清空左侧编辑输入。\n语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。\n新建选择语音/图片，取消返回来源；有内容可切换方式补充而不丢资料。未完成记录可恢复草稿；旧图片与语音记录保留在统一历史。当前提取为Demo效果，保存后不自动生成猝倒事件或服药任务。\n点击任务不再直接跳详情；确认后保存当前时间与日期并关闭弹窗，同日该弹窗只保存一次，刷新任务及首页权益文案。已记录点击查看进入服药详情；开启减少动态时以静态眠宝替代 GIF。\n添加时建立计时会话，不计入已完成次数。倒计时每秒按 endsAt 和当前时间计算，不改写整页或左侧编辑内容；切换页面继续，刷新恢复。暂停保存剩余秒数，继续重建 endsAt。到时自动保存一条小憩记录，id 去重，归属开始日期；提前结束至少计时 1 秒才保存，分钟向上取整。保存失败保留会话可重试，不显示虚假完成；取消本次小憩不新增记录；未接入关闭页面后的通知。\n同日只能提交一次；已记录时禁用四个选项。\n\n【B02/B03｜现状】四档仅更新“今天的感受”文字；权益主文案由支付和服药记录决定。当前同日一次，不可修改。\n【建议规则（待确认）】晨起记录按 userId + recordDate 唯一；误选通过“修改当日状态”覆盖原记录而非新增，保留修改时间；未选择时显示引导，已选择时显示选中项。跨日重新计算日期及可选状态。\n【待确认】是否开放修改；四档对应反馈文案与形象配置；晨起反馈与权益信息的排列关系；日期统一北京时间还是用户时区。未确认前不把晨起状态当作疾病判断。",
+    "logic": "点击建立档案进入两字段表单；点击稍后再说或遮罩关闭提示，已有档案不展示。刷新时未处理的提示保留；不影响首页其他服务。\nhomeStatus计算未领取、审核中、已领取未记录、已领取已记录四种展示态；反馈区域统一使用div，不绑定点击、跳转或弹窗。未记录文案为“今天的用药还未记录”，不再提示在本卡片操作。点击眠宝仍可切换展示态，不改写申请或用药数据。患者福利、用药记录等功能沿用NT1专区原有入口。\n今日任务区域已移除，不展示任务卡片或首页小憩倒计时；不清空已有业务数据。正式申请状态与权益文案映射仍待业务确认。\n页面顺序为顶部问候→晨起状态和眠宝权益卡→Banner→NT1专区。轮播每 5 秒循环；离开页面清除计时器，页面隐藏、轮播内有焦点或系统要求减少动态时暂停。仅更新轮播区域，不清空左侧编辑输入。\n语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。\n未申请显示未申请，reviewing显示审核中；applied/claimed/rejected沿用既有三态概览映射为已申请，具体已申请含义仍待业务定义。角标随状态重绘更新，不额外保存状态，不改变按钮目标。\n新建选择语音/图片，取消返回来源；有内容可切换方式补充而不丢资料。未完成记录可恢复草稿；旧图片与语音记录保留在统一历史。当前提取为Demo效果，保存后不自动生成猝倒事件或服药任务。\n同日只能提交一次；已记录时禁用四个选项。\n\n【B02/B03｜现状】四档仅更新“今天的感受”文字；权益主文案由支付和服药记录决定。当前同日一次，不可修改。\n【建议规则（待确认）】晨起记录按 userId + recordDate 唯一；误选通过“修改当日状态”覆盖原记录而非新增，保留修改时间；未选择时显示引导，已选择时显示选中项。跨日重新计算日期及可选状态。\n【待确认】是否开放修改；四档对应反馈文案与形象配置；晨起反馈与权益信息的排列关系；日期统一北京时间还是用户时区。未确认前不把晨起状态当作疾病判断。",
     "modules": [
       {
         "title": "首次登录建档引导",
         "description": "手机号授权后到达首页，无健康档案时展示带眠宝的建档提示弹窗；不显示右上角关闭按钮。",
         "fields": "onboardingPending、patientArchive；目标 patientArchive。",
-        "logic": "点击建立档案进入两字段表单；点击稍后再说或遮罩关闭提示，已有档案不展示。刷新时未处理的提示保留；不影响首页原任务与服务。"
+        "logic": "点击建立档案进入两字段表单；点击稍后再说或遮罩关闭提示，已有档案不展示。刷新时未处理的提示保留；不影响首页其他服务。"
       },
       {
         "title": "眠宝权益卡",
-        "description": "根据商保状态与今日用药记录展示对应文案；点击文案进入下一步，点击眠宝切换预览状态。",
+        "description": "根据商保状态和今日用药记录展示静态眠宝反馈，不展示任何状态操作按钮。",
         "fields": "当前字段补齐：insuranceStatus、meds[].day、homePreviewState。\n建议申请字段（待确认）：applicationId、applicationStatus、benefitStatus、updatedAt、rejectReason。",
-        "logic": "未领取或审核中进入商保页；已领取未记录打开用药弹窗；已记录进入服药记录。\n\n【A02/D01｜现状】未领取/审核中进入 payment；已领取且今日无记录打开服药弹窗；已记录进入 med。点击眠宝可覆盖展示状态，不改变申请数据。\n【建议规则（待确认）】申请状态与权益可用状态分别保存；approved 只有经权益接口确认可用后才映射“已领取”。审核拒绝显示拒绝原因及重申入口，不能映射已领取。状态成功刷新后统一重算首页与支付详情。\n【待确认】未申请/审核中/已通过/已拒绝分别对应的首页文案、按钮、跳转；通过后是否需激活；多个申请取哪一份；申请服务、失效规则。临时展示状态不作为真实办理依据，正式版是否保留点击切换需确认。"
+        "logic": "homeStatus计算未领取、审核中、已领取未记录、已领取已记录四种展示态；反馈区域统一使用div，不绑定点击、跳转或弹窗。未记录文案为“今天的用药还未记录”，不再提示在本卡片操作。点击眠宝仍可切换展示态，不改写申请或用药数据。患者福利、用药记录等功能沿用NT1专区原有入口。\n今日任务区域已移除，不展示任务卡片或首页小憩倒计时；不清空已有业务数据。正式申请状态与权益文案映射仍待业务确认。"
       },
       {
         "title": "首页滚动 Banner",
         "description": "晨起状态与眠宝权益卡之后展示三张固定推荐卡片，分别进入健康记录、眠宝帮您和知识中心；支持自动轮播、箭头、指示点、横向滑动；不显示暂停按钮。",
         "fields": "homeBanners[]：title、text、action、target、theme；bannerStates.home：index。",
-        "logic": "页面顺序为顶部问候→晨起状态和眠宝权益卡→Banner→NT1专区→今日任务。轮播每 5 秒循环；离开页面清除计时器，页面隐藏、轮播内有焦点或系统要求减少动态时暂停。仅更新轮播区域，不清空左侧编辑输入。"
+        "logic": "页面顺序为顶部问候→晨起状态和眠宝权益卡→Banner→NT1专区。轮播每 5 秒循环；离开页面清除计时器，页面隐藏、轮播内有焦点或系统要求减少动态时暂停。仅更新轮播区域，不清空左侧编辑输入。"
       },
       {
         "title": "NT1专区",
-        "description": "区域标题为NT1专区。六个入口：病程记录、药房地图、线上购药、患者福利、用药记录和我的专员。",
-        "fields": "journey、pharmacy、shop、payment、medReminder、specialist。",
-        "logic": "语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。"
+        "description": "区域标题为NT1专区。六个入口：病程记录、药房地图、线上购药、患者福利、用药记录和我的专员。患者福利按钮右上方显示申请状态角标，默认未申请。",
+        "fields": "journey、pharmacy、shop、payment、medReminder、specialist。\n角标来自paymentSummary().label；insuranceStatus=unclaimed/reviewing/applied/claimed/rejected。",
+        "logic": "语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。\n未申请显示未申请，reviewing显示审核中；applied/claimed/rejected沿用既有三态概览映射为已申请，具体已申请含义仍待业务定义。角标随状态重绘更新，不额外保存状态，不改变按钮目标。"
       },
       {
         "title": "病程记录快捷入口",
@@ -122,46 +70,36 @@
         "logic": "新建选择语音/图片，取消返回来源；有内容可切换方式补充而不丢资料。未完成记录可恢复草稿；旧图片与语音记录保留在统一历史。当前提取为Demo效果，保存后不自动生成猝倒事件或服药任务。"
       },
       {
-        "title": "今日用药与眠宝引导弹窗",
-        "description": "点击今日用药或首页权益卡的记录按钮，居中弹出眠宝 GIF 引导；确认已按医嘱服药后保存，已记录时显示完成状态与查看入口。",
-        "fields": "settings.medTime；meds[]：id、time、day、note；动效 assets/mianbao-med-guide.gif。",
-        "logic": "点击任务不再直接跳详情；确认后保存当前时间与日期并关闭弹窗，同日该弹窗只保存一次，刷新任务及首页权益文案。已记录点击查看进入服药详情；开启减少动态时以静态眠宝替代 GIF。"
-      },
-      {
-        "title": "小憩引导弹窗与首页倒计时",
-        "description": "点击日常小憩时钟居中弹出与今日用药同样的眠宝 GIF 卡片，填写时长并添加，随后关闭弹窗并在首页显示倒计时。进行中再次点击可暂停、继续或结束并记录。",
-        "fields": "napSession：id、day、startedAt、totalSeconds、remainingSeconds、endsAt、status(running/paused/finished)；时长 1—120 整数分钟；naps[]：id、day、time、minutes；动效 assets/mianbao-nap-guide.gif。",
-        "logic": "添加时建立计时会话，不计入已完成次数。倒计时每秒按 endsAt 和当前时间计算，不改写整页或左侧编辑内容；切换页面继续，刷新恢复。暂停保存剩余秒数，继续重建 endsAt。到时自动保存一条小憩记录，id 去重，归属开始日期；提前结束至少计时 1 秒才保存，分钟向上取整。保存失败保留会话可重试，不显示虚假完成；取消本次小憩不新增记录；未接入关闭页面后的通知。"
-      },
-      {
         "title": "状态打卡",
         "description": "四档状态选择：精神饱满/有些疲惫/需要小睡/状态不佳；\n选择后下方对应文案变更；",
         "fields": "moods[本地日期]：四档状态之一。\n建议正式字段（待确认）：userId、recordDate、moodCode、createdAt、updatedAt；recordDate 按选定业务时区生成。",
         "logic": "同日只能提交一次；已记录时禁用四个选项。\n\n【B02/B03｜现状】四档仅更新“今天的感受”文字；权益主文案由支付和服药记录决定。当前同日一次，不可修改。\n【建议规则（待确认）】晨起记录按 userId + recordDate 唯一；误选通过“修改当日状态”覆盖原记录而非新增，保留修改时间；未选择时显示引导，已选择时显示选中项。跨日重新计算日期及可选状态。\n【待确认】是否开放修改；四档对应反馈文案与形象配置；晨起反馈与权益信息的排列关系；日期统一北京时间还是用户时区。未确认前不把晨起状态当作疾病判断。"
       }
     ],
-    "updatedAt": "2026-10-15T05:34:22.664227+00:00"
+    "updatedAt": "2026-10-15T07:12:32.414664+00:00"
   },
   "special": {
     "title": "发作性睡病专区",
     "group": "健康档案",
     "origin": "图示页面",
-    "goal": "集中记录猝倒、睡眠和自测信息，帮助患者回顾一段时间内的变化。",
+    "goal": "集中记录猝倒与自测信息，帮助患者回顾已记录的变化。",
     "interactions": [
       "底部 Tab 显示健康档案，路由仍为 special；专区标题和已有记录不因改名变化。",
       "展示本月猝倒统计，移除今日次数；保留快速记录和自然周趋势。",
       "测评区展示当前全部量表名称 ESS/SRSS，可点名称、箭头或左右滑动卡片；照片记录绑定所操作卡片。",
-      "睡眠辅助工具仅展示小憩闹钟、注意力挑战、睡眠日志。"
+      "移除睡眠辅助工具整块区域及小憩闹钟、注意力挑战、睡眠日志入口。",
+      "本月猝倒卡片的快速记录按钮在卡片底部独立区域展示。",
+      "量表趋势按最近七次有效得分记录展示，横坐标为月/日；不按自然周聚合，不显示本周分数及测评与拍照记录小字。"
     ],
-    "data": "events[].day、本月与上月事件数。\n建议统计参数：periodStart、periodEnd、comparisonStart、comparisonEnd、count、comparisonCount、hasRecordedData。\nweekOffset、events[].day。\n建议趋势字段：periodStart、periodEnd、dayCounts[]、selectedWeek；条目按 occurredAt 过滤。\nscaleCatalog[]：code、name、canAnswer；activeScale；ess[]；scalePhotos[]；scrollLeft 为卡片视图位置。\nnap、game、sleepList。\nTab label=健康档案；route=special；专区页面标题仍为发作性睡病专区。",
+    "data": "events[].day、本月与上月事件数。\n建议统计参数：periodStart、periodEnd、comparisonStart、comparisonEnd、count、comparisonCount、hasRecordedData。\nweekOffset、events[].day。\n建议趋势字段：periodStart、periodEnd、dayCounts[]、selectedWeek；条目按 occurredAt 过滤。\nscaleCatalog[]：code、name、canAnswer；activeScale；ess[]、scalePhotos[]：id、scale、score、day、time；recentScaleRecords(name)返回最近最多7条有效得分记录。\nTab label=健康档案；route=special；专区页面标题仍为发作性睡病专区。",
     "pending": "正式量表题目、授权、计分规则及拍照识别需确认；照片仅保存在当前浏览器。",
-    "logic": "月度反馈按已记录次数比较；快速记录保存后更新本月次数和受影响的周趋势，不展示今日次数。\n\n【C03｜现状】本月累计条数直接与上个完整月比较；上月 0 条进入无上月记录文案。统计是已记录次数，不是完整发作次数。\n【建议规则（待确认）】默认对比同等经过天数；展示两个区间及记录次数，用“记录增加/减少/持平”文案。无记录标“无已记录数据”，不推断没有事件。补录、编辑、删除后重算对应日/月，并清除临时展示覆盖态。\n【待确认】等长区间或整月比较、2 月与大小月截止处理、是否要明确记录“无事件”、月度提示文案。正式版不以记录减少直接得出病情改善。\n周一至周日聚合；查看记录从底部弹出所选周列表。\n\n【C04｜现状】周图与底部列表按同一 weekOffset/日期过滤；图表无记录画为 0。\n【建议规则（待确认）】周一至周日，同一周范围同时驱动图表与列表；允许历史周，不允许超过当前周；返回时保留选中周。新增/修改/删除后更新受影响周；无数据显示“该周暂无已记录事件”。\n【待确认】最早查询范围、无记录日是否用空标记、是否加入月份/诱因分析。独立 trend 页的入口和保留范围另行确认。\n当前量表清单为 ESS、SRSS。名称高亮与当前卡片同步；第一张禁止向前、最后一张禁止向后，不循环。ESS 支持答题/拍照，SRSS 支持拍照；拍照按钮携带对应 scale，不依赖之前打开过哪张卡。切卡只更新选中视图，不重绘页面，不清空左侧编辑内容。趋势沿用现有本周得分计算；正式量表清单、版本、计分及医学审核仍待接入。\n该区域仅展示小憩闹钟、注意力挑战、睡眠日志三个入口，分别进入 nap、game、sleepList；返回后沿用原记录。科学小贴士不在本区域展示，不良反应速记已按此前要求移除。“睡眠日子”按睡眠日志处理。\n只修改导航和分组名称，保留原路由、页面功能及记录关联，不重建记录。二级页面不展示主导航。",
+    "logic": "底部按钮采用正常布局流，点击仍打开猝倒快速记录弹窗。月度反馈按已记录次数比较；快速记录保存后更新本月次数和受影响的周趋势，不展示今日次数。\n\n【C03｜现状】本月累计条数直接与上个完整月比较；上月 0 条进入无上月记录文案。统计是已记录次数，不是完整发作次数。\n【建议规则（待确认）】默认对比同等经过天数；展示两个区间及记录次数，用“记录增加/减少/持平”文案。无记录标“无已记录数据”，不推断没有事件。补录、编辑、删除后重算对应日/月，并清除临时展示覆盖态。\n【待确认】等长区间或整月比较、2 月与大小月截止处理、是否要明确记录“无事件”、月度提示文案。正式版不以记录减少直接得出病情改善。\n周一至周日聚合；查看记录从底部弹出所选周列表。\n\n【C04｜现状】周图与底部列表按同一 weekOffset/日期过滤；图表无记录画为 0。\n【建议规则（待确认）】周一至周日，同一周范围同时驱动图表与列表；允许历史周，不允许超过当前周；返回时保留选中周。新增/修改/删除后更新受影响周；无数据显示“该周暂无已记录事件”。\n【待确认】最早查询范围、无记录日是否用空标记、是否加入月份/诱因分析。独立 trend 页的入口和保留范围另行确认。\nESS汇总答题和ESS照片得分，SRSS只读取SRSS照片得分；空/缺失/无效或负数得分、无有效日期的记录不入图，0分保留。优先按time/createdAt排序，无有效时间时使用day零点，同时间保留来源顺序；取最近7条后由早到晚展示。横坐标按每条记录day显示MM/DD，同日多条分别保留，不合并、不补齐无记录日期；少于7条展示实际数量，无有效得分显示空态。原始时间和年份保留，图表可访问说明包含完整日期及得分。\n保留ESS答题/拍照和SRSS拍照入口，照片归属由按钮携带scale决定。新增得分保存后重算对应量表趋势，不修改原记录。切卡同步名称、高亮和箭头边界；首尾不循环，不重绘整页或清空左侧编辑。猝倒周期趋势仍按自然周展示，与量表记录趋势分开计算。正式量表清单、计分、图片识别及医学审核仍待接入。\n只修改导航和分组名称，保留原路由、页面功能及记录关联，不重建记录。二级页面不展示主导航。 本页不再展示睡眠辅助工具及其中三个入口；仅移除当前页面入口，不清空原有小憩、挑战或睡眠记录。",
     "modules": [
       {
         "title": "本月猝倒记录",
-        "description": "仅展示本月已记录猝倒次数、眠宝反馈和快速记录按钮；不再展示今日次数。",
+        "description": "显示本月已记录猝倒次数和眠宝反馈；快速记录按钮在卡片底部独立操作区，不覆盖眠宝形象。",
         "fields": "events[].day、本月与上月事件数。\n建议统计参数：periodStart、periodEnd、comparisonStart、comparisonEnd、count、comparisonCount、hasRecordedData。",
-        "logic": "月度反馈按已记录次数比较；快速记录保存后更新本月次数和受影响的周趋势，不展示今日次数。\n\n【C03｜现状】本月累计条数直接与上个完整月比较；上月 0 条进入无上月记录文案。统计是已记录次数，不是完整发作次数。\n【建议规则（待确认）】默认对比同等经过天数；展示两个区间及记录次数，用“记录增加/减少/持平”文案。无记录标“无已记录数据”，不推断没有事件。补录、编辑、删除后重算对应日/月，并清除临时展示覆盖态。\n【待确认】等长区间或整月比较、2 月与大小月截止处理、是否要明确记录“无事件”、月度提示文案。正式版不以记录减少直接得出病情改善。"
+        "logic": "底部按钮采用正常布局流，点击仍打开猝倒快速记录弹窗。月度反馈按已记录次数比较；快速记录保存后更新本月次数和受影响的周趋势，不展示今日次数。\n\n【C03｜现状】本月累计条数直接与上个完整月比较；上月 0 条进入无上月记录文案。统计是已记录次数，不是完整发作次数。\n【建议规则（待确认）】默认对比同等经过天数；展示两个区间及记录次数，用“记录增加/减少/持平”文案。无记录标“无已记录数据”，不推断没有事件。补录、编辑、删除后重算对应日/月，并清除临时展示覆盖态。\n【待确认】等长区间或整月比较、2 月与大小月截止处理、是否要明确记录“无事件”、月度提示文案。正式版不以记录减少直接得出病情改善。"
       },
       {
         "title": "猝倒周期趋势",
@@ -171,24 +109,18 @@
       },
       {
         "title": "测评记录",
-        "description": "显示 ESS 量表和 SRSS 量表名称；下方卡片可左右滑动，支持点击量表名称、箭头或键盘方向键切换。",
-        "fields": "scaleCatalog[]：code、name、canAnswer；activeScale；ess[]；scalePhotos[]；scrollLeft 为卡片视图位置。",
-        "logic": "当前量表清单为 ESS、SRSS。名称高亮与当前卡片同步；第一张禁止向前、最后一张禁止向后，不循环。ESS 支持答题/拍照，SRSS 支持拍照；拍照按钮携带对应 scale，不依赖之前打开过哪张卡。切卡只更新选中视图，不重绘页面，不清空左侧编辑内容。趋势沿用现有本周得分计算；正式量表清单、版本、计分及医学审核仍待接入。"
-      },
-      {
-        "title": "睡眠辅助工具",
-        "description": "按小憩闹钟、注意力挑战、睡眠日志的顺序展示三个入口。",
-        "fields": "nap、game、sleepList。",
-        "logic": "该区域仅展示小憩闹钟、注意力挑战、睡眠日志三个入口，分别进入 nap、game、sleepList；返回后沿用原记录。科学小贴士不在本区域展示，不良反应速记已按此前要求移除。“睡眠日子”按睡眠日志处理。"
+        "description": "显示ESS/SRSS量表名称和得分趋势，支持名称、箭头、滑动和键盘切换；移除本周分数及测评与拍照记录说明小字。",
+        "fields": "scaleCatalog[]：code、name、canAnswer；activeScale；ess[]、scalePhotos[]：id、scale、score、day、time；recentScaleRecords(name)返回最近最多7条有效得分记录。",
+        "logic": "ESS汇总答题和ESS照片得分，SRSS只读取SRSS照片得分；空/缺失/无效或负数得分、无有效日期的记录不入图，0分保留。优先按time/createdAt排序，无有效时间时使用day零点，同时间保留来源顺序；取最近7条后由早到晚展示。横坐标按每条记录day显示MM/DD，同日多条分别保留，不合并、不补齐无记录日期；少于7条展示实际数量，无有效得分显示空态。原始时间和年份保留，图表可访问说明包含完整日期及得分。\n保留ESS答题/拍照和SRSS拍照入口，照片归属由按钮携带scale决定。新增得分保存后重算对应量表趋势，不修改原记录。切卡同步名称、高亮和箭头边界；首尾不循环，不重绘整页或清空左侧编辑。猝倒周期趋势仍按自然周展示，与量表记录趋势分开计算。正式量表清单、计分、图片识别及医学审核仍待接入。"
       },
       {
         "title": "健康档案导航与页面命名",
         "description": "底部专病管理改为健康档案；左侧分组同步显示健康档案。",
         "fields": "Tab label=健康档案；route=special；专区页面标题仍为发作性睡病专区。",
-        "logic": "只修改导航和分组名称，保留原路由、页面功能及记录关联，不重建记录。二级页面不展示主导航。"
+        "logic": "只修改导航和分组名称，保留原路由、页面功能及记录关联，不重建记录。二级页面不展示主导航。 本页不再展示睡眠辅助工具及其中三个入口；仅移除当前页面入口，不清空原有小憩、挑战或睡眠记录。"
       }
     ],
-    "updatedAt": "2026-10-15T05:32:50.328640+00:00"
+    "updatedAt": "2026-10-15T07:12:32.414664+00:00"
   },
   "ai": {
     "title": "眠宝帮您",
@@ -254,7 +186,8 @@
     "interactions": [
       "底部导航第四项为知识中心，首页第三张推荐卡片也进入知识中心。",
       "选择分类筛选文章，点击文章卡片进入全文详情。",
-      "从详情返回时保留分类与列表位置。"
+      "从详情返回时保留分类与列表位置。",
+      "文章卡片移除副标题与箭头；发布日期按年月日显示，并与详情读取同一字段。"
     ],
     "modules": [
       {
@@ -271,9 +204,9 @@
       },
       {
         "title": "患教文章列表",
-        "description": "显示文章分类、预计阅读时长、标题和摘要，点击整张文章卡片阅读。",
-        "fields": "knowledgeArticles[]：id、category、title、summary、read、icon、theme、sections[][]；当前 6 篇本地文章。",
-        "logic": "按配置顺序展示，分类过滤与篇数使用同一结果；无匹配时显示空列表提示。正文复用既有眠宝模块中的记录与资料整理内容，暂不接文章管理后台。"
+        "description": "文章卡片仅显示封面、分类、标题和年月日格式的发布日期；不显示副标题或箭头，整张卡片均可点击。",
+        "fields": "knowledgeArticles[]：id、category、title、publishedAt(YYYY-MM-DD)、summary、read、icon、theme、sections[][]；当前6篇本地文章。knowledgePublishDate 将日期格式化为 YYYY年M月D日。",
+        "logic": "按配置顺序展示，分类过滤与篇数使用同一结果；无匹配显示空态。列表不展示summary或阅读时长；summary仅保留在详情。Demo示例发布日期统一配置为2026-10-15，不能随访问日期变化；正式发布日期由内容服务提供，不使用阅读时长替代。缺少发布日期时不显示日期，不影响进入详情。"
       },
       {
         "title": "详情跳转与回到列表",
@@ -283,44 +216,45 @@
       }
     ],
     "pending": "正式医学内容、医学审核、文章管理后台和发布规则待接入；目前为既有 Demo 内容展示。",
-    "updatedAt": "2026-10-14T11:43:54.658275+00:00",
-    "data": "导航 label=知识中心；route=rights（保留原路由键）；首页 homeBanners[2].target=rights。\nknowledgeCategories 由文章分类去重；knowledgeFilter；knowledgeArticles[].category。\nknowledgeArticles[]：id、category、title、summary、read、icon、theme、sections[][]；当前 6 篇本地文章。\nroute=articleDetail；route.articleId；knowledgeScrollTop。",
-    "logic": "权益中心页面整体替换为知识中心，不展示创新支付状态卡、保障服务卡或 Banner。首页患者福利及眠宝帮您中已有申请功能保留；标题更名不改变支付数据。\n默认全部，点击分类只更新筛选按钮和文章列表，不重绘整页或清空左侧编辑内容；分类及列表位置在当前会话保留，刷新回到全部。\n按配置顺序展示，分类过滤与篇数使用同一结果；无匹配时显示空列表提示。正文复用既有眠宝模块中的记录与资料整理内容，暂不接文章管理后台。\n进入详情前保存列表滚动位置；返回读取同一目录并恢复当前分类和位置，不创建新会话或患者记录。详情为二级页，隐藏首页功能栏。"
+    "updatedAt": "2026-10-15T05:52:37.672928+00:00",
+    "data": "导航 label=知识中心；route=rights（保留原路由键）；首页 homeBanners[2].target=rights。\nknowledgeCategories 由文章分类去重；knowledgeFilter；knowledgeArticles[].category。\nknowledgeArticles[]：id、category、title、publishedAt(YYYY-MM-DD)、summary、read、icon、theme、sections[][]；当前6篇本地文章。knowledgePublishDate 将日期格式化为 YYYY年M月D日。\nroute=articleDetail；route.articleId；knowledgeScrollTop。",
+    "logic": "权益中心页面整体替换为知识中心，不展示创新支付状态卡、保障服务卡或 Banner。首页患者福利及眠宝帮您中已有申请功能保留；标题更名不改变支付数据。\n默认全部，点击分类只更新筛选按钮和文章列表，不重绘整页或清空左侧编辑内容；分类及列表位置在当前会话保留，刷新回到全部。\n按配置顺序展示，分类过滤与篇数使用同一结果；无匹配显示空态。列表不展示summary或阅读时长；summary仅保留在详情。Demo示例发布日期统一配置为2026-10-15，不能随访问日期变化；正式发布日期由内容服务提供，不使用阅读时长替代。缺少发布日期时不显示日期，不影响进入详情。\n进入详情前保存列表滚动位置；返回读取同一目录并恢复当前分类和位置，不创建新会话或患者记录。详情为二级页，隐藏首页功能栏。"
   },
   "mine": {
     "title": "我的",
     "group": "我的",
     "origin": "导航图示，内容补充",
-    "goal": "集中管理个人记录和页面设置。",
+    "goal": "集中展示个人资料和账户设置入口。",
     "interactions": [
-      "我的首页展示眠宝形象、记录与个人资料入口，以及任务提醒设置和通用设置入口。",
-      "设置页可保存消息通知偏好，进入用户协议、退出登录和注销账号。",
-      "退出登录保留本地记录；注销经二次输入确认后清除本地记录，页面修改意见仍保留在项目文件。"
+      "我的服务分组仅显示个人资料，无副说明；消息通知入口移除。",
+      "设置分组仅显示一个设置入口，进入账户设置；不展示我的记录和任务提醒设置入口。",
+      "设置页保留通知偏好、用户协议、退出登录和注销账号。",
+      "顶部问候显示一串固定用户ID，替代体验用户；同一本地账户刷新或退出重进后保持一致。"
     ],
-    "data": "authStatus：active / signed-out / closed；保存在当前浏览器。\nsettings：medTime、napMinutes、notificationEnabled。",
+    "data": "state.userId：本地展示ID，首次访问我的页时生成MB前缀及12位字母数字串，并保存至现有账户状态；authStatus：active/signed-out/closed。正式版userId由账户服务返回。\nprofile：个人资料路由。\n目标路由 accountSettings；settings.notificationEnabled；authStatus。",
     "pending": "正式账户、患者身份、授权管理和云端同步未设计。",
-    "logic": "active 显示资料、记录与设置入口；signed-out / closed 显示重新进入状态卡片。\n退出保留本地记录；注销清除记录与设置，保留写入 index.html 的修改意见。",
+    "logic": "已有userId直接复用；缺失时补建并保存，不覆盖现有记录。页面输出按文本转义；刷新、退出再登录沿用同一ID，注销或清空后重新进入生成新ID。保存失败提示用户；ID仅为当前Demo展示标识，不作为真实身份验证。\n退出、注销及重新进入沿用现有流程。正式账号隔离、会话过期、跨设备同步、留存策略由账户服务定义。\n点击个人资料进入档案摘要二级页；不显示消息通知或我的记录入口。仅调整入口，不删除已有患者档案、消息或健康记录。通知偏好仍在设置页维护，本次不改变设置功能。\n点击设置进入账户设置二级页，保留通知偏好、用户协议、退出登录和注销账号功能。移除任务提醒设置入口不改写用药时间、小憩时长或现有任务数据。退出与注销沿用现有确认及数据处理流程；正式账号认证与数据留存规则待接口定义。",
     "modules": [
       {
         "title": "个人形象与账户状态",
-        "description": "顶部显示眠宝形象和当前账户状态。",
-        "fields": "authStatus：active / signed-out / closed。\n正式建议 userId、sessionStatus、patientRole、eligibilityStatus、profileSummary；与浏览器 authStatus 区分。",
-        "logic": "退出返回登录页，注销后保留原注销完成状态与重新进入入口。\n\n【E01｜现状】退出/注销仅控制本地访问，不是真实用户身份认证。\n【建议规则（待确认）】退出清除认证会话，账号健康数据按已确认缓存策略处理；换账号不能读上个账号数据；登录过期先确认登录再恢复来源操作；注销不得通过普通重新进入恢复已删除账号记录。\n【待确认】登录方式、用户/家属范围、资格、跨设备同步、退出缓存、登录恢复。"
+        "description": "顶部显示眠宝形象、当前账户状态及用户ID，不再显示体验用户。",
+        "fields": "state.userId：本地展示ID，首次访问我的页时生成MB前缀及12位字母数字串，并保存至现有账户状态；authStatus：active/signed-out/closed。正式版userId由账户服务返回。",
+        "logic": "已有userId直接复用；缺失时补建并保存，不覆盖现有记录。页面输出按文本转义；刷新、退出再登录沿用同一ID，注销或清空后重新进入生成新ID。保存失败提示用户；ID仅为当前Demo展示标识，不作为真实身份验证。\n退出、注销及重新进入沿用现有流程。正式账号隔离、会话过期、跨设备同步、留存策略由账户服务定义。"
       },
       {
         "title": "我的服务",
-        "description": "我的记录、个人资料与消息通知入口。",
-        "fields": "各入口目标页面与记录数量。\n服务计数按 userId 及 records 统一类别；消息 unreadCount 按真实未读列表计算。",
-        "logic": "点击进入对应列表或说明页。\n\n【C10/E01/E04｜建议规则（待确认）】服务列表按本用户有效记录汇总，不混入其他账号；消息中心区分空列表/加载失败；记录入口与首页“全部记录”采用同一范围。\n【待确认】记录清单、个人资料可编辑字段和消息服务范围。"
+        "description": "我的服务分组仅显示个人资料，使用无副说明的紧凑入口。",
+        "fields": "profile：个人资料路由。",
+        "logic": "点击个人资料进入档案摘要二级页；不显示消息通知或我的记录入口。仅调整入口，不删除已有患者档案、消息或健康记录。通知偏好仍在设置页维护，本次不改变设置功能。"
       },
       {
-        "title": "偏好与账户",
-        "description": "任务提醒设置及通用设置入口。",
-        "fields": "settings、authStatus。\n建议 settingsVersion、consentVersion、authStatus；各设置共享数据源。",
-        "logic": "通用设置内处理通知偏好、协议、退出与注销。\n\n【B04/E01｜建议规则（待确认）】提醒偏好统一，授权状态与偏好分开；退出和注销是不同流程；清除浏览器数据不能视为正式注销完成。\n【待确认】通知机制、协议确认时机、注销认证及处理反馈。\n\n【E02/E03｜通用建议（待确认）】存在保存/删除/查询时，加载、成功、失败和空数据分别显示；失败保留输入或原数据，不伪造完成。重复请求使用记录级标识去重；未保存离开提示；新增/修改/删除成功刷新依赖统计。只读页面无额外数据写入。\n【E06｜说明版本】“现状”描述当前界面；“建议规则（待确认）”是开发方案供业务确认；“待实现”只指说明中的新模块。旧页面通用规则与本模块建议冲突时先确认再实现，不能视为中间页面已经变更。"
+        "title": "设置",
+        "description": "设置分组仅包含设置入口，不展示任务提醒设置入口。",
+        "fields": "目标路由 accountSettings；settings.notificationEnabled；authStatus。",
+        "logic": "点击设置进入账户设置二级页，保留通知偏好、用户协议、退出登录和注销账号功能。移除任务提醒设置入口不改写用药时间、小憩时长或现有任务数据。退出与注销沿用现有确认及数据处理流程；正式账号认证与数据留存规则待接口定义。"
       }
     ],
-    "updatedAt": "2026-09-30T09:01:06.520615+00:00"
+    "updatedAt": "2026-10-15T07:12:32.414664+00:00"
   },
   "med": {
     "title": "服药打卡",
@@ -815,27 +749,27 @@
     "origin": "页面意见补充",
     "goal": "展示添加企业微信专员的引导卡片。",
     "interactions": [
-      "从首页“我的专员”进入卡片页。",
-      "正式二维码配置后，用户可长按识别并添加专员；当前只展示不可扫码的占位框。"
+      "从首页我的专员进入卡片页。",
+      "页面展示眠宝、添加企业微信专员说明和二维码区域，不显示正式上线后或二维码待配置文案。"
     ],
-    "data": "企微二维码 URL、专员名称、服务主体：待接入。",
+    "data": "专员名称、服务主体待配置。\n建议 specialistId、name、provider、workingHours、assignmentStatus、contactMethod。\n二维码 URL、有效期待配置。\n建议 qrUrl、expiresAt、updatedAt、fallbackContact、status。",
     "pending": "企业微信主体、二维码、有效期、服务范围和隐私告知需业务方提供。",
-    "logic": "当前占位框不可扫码；正式素材接入后才能提示长按识别。\n二维码到期与专员身份需服务端维护。",
+    "logic": "二维码尚未接入，当前区域是占位，本次只改显示文字。\n服务主体与授权告知正式上线前确认。\n\n【D05｜建议规则（待确认）】展示本用户已分配专员，服务时间与主体清楚；无专员展示申请/等待分配路径；资料更新同步所有专员入口。\n【待确认】分配条件、未分配行为、更换与跨地区处理、资料授权。\n当前占位不可扫码；正式二维码需可维护和失效处理。\n\n【D05｜建议规则（待确认）】仅有效二维码允许识别；过期/下载失败显示刷新或替代联系路径；刷新由服务端返回，不使用旧码继续引导。\n【待确认】二维码更新、长按识别支持方式、添加结果如何获知、是否需要服务授权确认。\n\n【E02/E03｜通用建议（待确认）】存在保存/删除/查询时，加载、成功、失败和空数据分别显示；失败保留输入或原数据，不伪造完成。重复请求使用记录级标识去重；未保存离开提示；新增/修改/删除成功刷新依赖统计。只读页面无额外数据写入。\n【E06｜说明版本】“现状”描述当前界面；“建议规则（待确认）”是开发方案供业务确认；“待实现”只指说明中的新模块。旧页面通用规则与本模块建议冲突时先确认再实现，不能视为中间页面已经变更。\n【已确认｜二级导航】本页面隐藏底部五项一级导航栏，内容区占用释放的底部空间；使用顶部返回按钮回到来源页。仅首页、健康档案、眠宝帮您、知识中心、我的显示底部导航。",
     "modules": [
       {
         "title": "专员引导",
-        "description": "展示眠宝形象、添加专员说明。",
+        "description": "展示眠宝形象与添加专员说明，说明直接以长按识别下方二维码开始，删除正式上线后前缀。",
         "fields": "专员名称、服务主体待配置。\n建议 specialistId、name、provider、workingHours、assignmentStatus、contactMethod。",
         "logic": "服务主体与授权告知正式上线前确认。\n\n【D05｜建议规则（待确认）】展示本用户已分配专员，服务时间与主体清楚；无专员展示申请/等待分配路径；资料更新同步所有专员入口。\n【待确认】分配条件、未分配行为、更换与跨地区处理、资料授权。"
       },
       {
         "title": "企业微信二维码",
-        "description": "展示二维码占位区域。",
+        "description": "保留企业微信二维码占位区域，移除区域内和下方的待配置提示文字；真实素材由业务方提供。",
         "fields": "二维码 URL、有效期待配置。\n建议 qrUrl、expiresAt、updatedAt、fallbackContact、status。",
         "logic": "当前占位不可扫码；正式二维码需可维护和失效处理。\n\n【D05｜建议规则（待确认）】仅有效二维码允许识别；过期/下载失败显示刷新或替代联系路径；刷新由服务端返回，不使用旧码继续引导。\n【待确认】二维码更新、长按识别支持方式、添加结果如何获知、是否需要服务授权确认。\n\n【E02/E03｜通用建议（待确认）】存在保存/删除/查询时，加载、成功、失败和空数据分别显示；失败保留输入或原数据，不伪造完成。重复请求使用记录级标识去重；未保存离开提示；新增/修改/删除成功刷新依赖统计。只读页面无额外数据写入。\n【E06｜说明版本】“现状”描述当前界面；“建议规则（待确认）”是开发方案供业务确认；“待实现”只指说明中的新模块。旧页面通用规则与本模块建议冲突时先确认再实现，不能视为中间页面已经变更。\n【已确认｜二级导航】本页面隐藏底部五项一级导航栏，内容区占用释放的底部空间；使用顶部返回按钮回到来源页。仅首页、健康档案、眠宝帮您、知识中心、我的显示底部导航。"
       }
     ],
-    "updatedAt": "2026-10-14T09:38:44.533701+00:00"
+    "updatedAt": "2026-10-15T05:47:12.891807+00:00"
   },
   "payment": {
     "title": "患者福利",
@@ -1125,26 +1059,20 @@
     "goal": "显示是否已建档，以及确诊时间和当前使用药物；可进入建立或修改档案。",
     "interactions": [
       "显示是否已建档，以及确诊时间和当前使用药物；可进入建立或修改档案。",
-      "保留原清除记录入口。"
+      "个人资料页不提供清除记录按钮；查看资料不会修改或清空已有数据。"
     ],
-    "data": "patientArchive.diagnosisDate、currentDrugs。\n父应用 mianbao-prototype-v1。",
+    "data": "patientArchive.diagnosisDate、currentDrugs。",
     "pending": "真实微信手机号授权、账户服务、正式协议正文及档案接口待接入。",
-    "logic": "未建档显示建立档案，已建档显示摘要和修改档案。\n操作前二次确认；清理父应用记录后重新进入登录，不修改独立眠宝服务的数据。",
+    "logic": "未建档显示建立档案，已建档显示摘要和修改档案。 本页不提供清除记录按钮；移除按钮不删除已有资料和业务记录。账户注销流程由设置页承接。",
     "modules": [
       {
         "title": "健康档案摘要",
         "description": "显示是否已建档，以及确诊时间和当前使用药物；可进入建立或修改档案。",
         "fields": "patientArchive.diagnosisDate、currentDrugs。",
-        "logic": "未建档显示建立档案，已建档显示摘要和修改档案。"
-      },
-      {
-        "title": "清除记录",
-        "description": "保留原清除记录入口。",
-        "fields": "父应用 mianbao-prototype-v1。",
-        "logic": "操作前二次确认；清理父应用记录后重新进入登录，不修改独立眠宝服务的数据。"
+        "logic": "未建档显示建立档案，已建档显示摘要和修改档案。 本页不提供清除记录按钮；移除按钮不删除已有资料和业务记录。账户注销流程由设置页承接。"
       }
     ],
-    "updatedAt": "2026-10-13T07:00:00.000Z"
+    "updatedAt": "2026-10-15T05:52:37.672928+00:00"
   },
   "settings": {
     "title": "提醒设置",
@@ -1358,40 +1286,47 @@
     "title": "建立健康档案",
     "group": "登录与健康档案",
     "origin": "新增交互",
-    "goal": "建档页显示眠宝引导；仅填写 NT1阵发性睡病确诊时间、当前使用药物两个业务字段。",
+    "goal": "通过确诊时间和当前用药卡片选择建立档案，支持多种药物和暂无用药。",
     "modules": [
       {
-        "title": "眠宝引导与两项档案字段",
-        "description": "建档页显示眠宝引导；仅填写 NT1阵发性睡病确诊时间、当前使用药物两个业务字段。",
-        "fields": "patientArchive.diagnosisDate：YYYY-MM-DD，必填；currentDrugs：1—500 字，必填，可填写暂无用药；createdAt、updatedAt 为保存元数据。",
-        "logic": "校验日期真实有效且不晚于当前业务日期；药物去除首尾空白后不得为空。不自动推断药品、剂量或治疗方案，其他疾病/身份信息不在本页采集。"
+        "title": "眠宝引导与确诊时间",
+        "description": "展示眠宝建档引导；填写NT1阵发性睡病确诊时间，页面仍只采集确诊时间和当前用药两个业务字段。",
+        "fields": "patientArchive.diagnosisDate：YYYY-MM-DD，必填；archiveFormDraft.diagnosisDate。",
+        "logic": "校验日期真实有效且不晚于当前本地日期；未建档无默认日期，编辑时回填已保存日期。"
       },
       {
-        "title": "保存、返回与档案回顾",
-        "description": "保存完成后进入首页；稍后建档或返回后，可从我的→个人资料继续建立或修改。",
-        "fields": "onboardingPending：首次登录缺档案时为 true；archiveFormDraft：当前填写草稿。",
-        "logic": "首次授权后首页弹出眠宝建档提示；已有完整档案不提示。稍后再说关闭引导，不创建空档案；保存成功更新档案并清除待建档状态；失败保留输入和旧档案。页面隐藏主导航，返回不保存输入。实际档案数据接口、权限、隐私合规与业务日期时区待确认。"
+        "title": "当前使用药物卡片",
+        "description": "卡片按钮多选：盐酸替洛利生、莫达非尼、哌甲酯、其他药物；最后一项固定为暂无用药。选择其他药物时展开名称填写框。",
+        "fields": "archiveDrugOptions[]：code、label；selectedDrugCodes[]：药物编码列表；otherDrugs：其他药物名称，选择other后必填；currentDrugs：由选择及其他名称生成的兼容文本，合计不超过500字。",
+        "logic": "首次不预选，必须选择至少一项。暂无用药与所有药物互斥：选暂无清空其他勾选，选任何药物清除暂无；允许取消勾选后重选。不触发整页渲染，不清空确诊时间或左侧说明草稿。其他药物取消后保留本次表单文字，重新选中可继续填写；保存时只写入已选中的内容。\n卡片仅记录患者实际用药，不据此生成处方、剂量或用药任务。可配置药物名称，正式药物清单需业务与医学团队确认。选项名核对参考AASM发作性睡病指南（https://aasm.org/wp-content/uploads/2022/03/Treatment_Central_Disorders_Hypersomnolence_Guideline_at_a_Glance.pdf）；盐酸替洛利生中文名参考国家药监局公开资料（https://www.nmpa.gov.cn/directory/web/nmpa/images/1707039824076019627.pdf）。不表达各地区上市可及性。"
+      },
+      {
+        "title": "保存、返回与历史档案兼容",
+        "description": "保存后回首页；从我的→个人资料进入时可回填修改，未保存返回不改写已存档案。",
+        "fields": "patientArchive：diagnosisDate、currentDrugs、selectedDrugCodes、otherDrugs、createdAt、updatedAt；onboardingPending；archiveFormDraft。",
+        "logic": "保存前校验日期、必选、暂无互斥和其他名称；失败保留勾选与文字、回滚旧档案，成功清除待建档标记。个人资料继续展示同一currentDrugs文本。旧文字档案按已知药名回填卡片，未知内容回填其他药物；旧暂无用药回填最后一项，不在进入页面时自动覆盖旧数据。保持二级页隐藏主导航。实际档案接口、业务时区与正式账号服务待接入。"
       }
     ],
     "interactions": [
-      "建档页显示眠宝引导；仅填写 NT1阵发性睡病确诊时间、当前使用药物两个业务字段。",
-      "保存完成后进入首页；稍后建档或返回后，可从我的→个人资料继续建立或修改。"
+      "当前使用药物采用可多选卡片，暂无用药固定最后且与药物互斥。",
+      "选择其他药物展开填写名称，保存后回填并展示于个人资料。",
+      "保留确诊时间校验和建立/修改档案流程，兼容已有文字用药档案。"
     ],
-    "data": "patientArchive.diagnosisDate：YYYY-MM-DD，必填；currentDrugs：1—500 字，必填，可填写暂无用药；createdAt、updatedAt 为保存元数据。\nonboardingPending：首次登录缺档案时为 true；archiveFormDraft：当前填写草稿。",
-    "logic": "校验日期真实有效且不晚于当前业务日期；药物去除首尾空白后不得为空。不自动推断药品、剂量或治疗方案，其他疾病/身份信息不在本页采集。\n首次授权后首页弹出眠宝建档提示；已有完整档案不提示。稍后再说关闭引导，不创建空档案；保存成功更新档案并清除待建档状态；失败保留输入和旧档案。页面隐藏主导航，返回不保存输入。实际档案数据接口、权限、隐私合规与业务日期时区待确认。",
+    "data": "patientArchive.diagnosisDate：YYYY-MM-DD，必填；archiveFormDraft.diagnosisDate。\narchiveDrugOptions[]：code、label；selectedDrugCodes[]：药物编码列表；otherDrugs：其他药物名称，选择other后必填；currentDrugs：由选择及其他名称生成的兼容文本，合计不超过500字。\npatientArchive：diagnosisDate、currentDrugs、selectedDrugCodes、otherDrugs、createdAt、updatedAt；onboardingPending；archiveFormDraft。",
+    "logic": "校验日期真实有效且不晚于当前本地日期；未建档无默认日期，编辑时回填已保存日期。\n首次不预选，必须选择至少一项。暂无用药与所有药物互斥：选暂无清空其他勾选，选任何药物清除暂无；允许取消勾选后重选。不触发整页渲染，不清空确诊时间或左侧说明草稿。其他药物取消后保留本次表单文字，重新选中可继续填写；保存时只写入已选中的内容。\n卡片仅记录患者实际用药，不据此生成处方、剂量或用药任务。可配置药物名称，正式药物清单需业务与医学团队确认。选项名核对参考AASM发作性睡病指南（https://aasm.org/wp-content/uploads/2022/03/Treatment_Central_Disorders_Hypersomnolence_Guideline_at_a_Glance.pdf）；盐酸替洛利生中文名参考国家药监局公开资料（https://www.nmpa.gov.cn/directory/web/nmpa/images/1707039824076019627.pdf）。不表达各地区上市可及性。\n保存前校验日期、必选、暂无互斥和其他名称；失败保留勾选与文字、回滚旧档案，成功清除待建档标记。个人资料继续展示同一currentDrugs文本。旧文字档案按已知药名回填卡片，未知内容回填其他药物；旧暂无用药回填最后一项，不在进入页面时自动覆盖旧数据。保持二级页隐藏主导航。实际档案接口、业务时区与正式账号服务待接入。",
     "pending": "真实微信手机号授权、账户服务、正式协议正文及档案接口待接入。",
-    "updatedAt": "2026-10-13T07:00:00.000Z"
+    "updatedAt": "2026-10-15T07:29:48.197321+00:00"
   },
   "journey": {
     "title": "病程记录 · 图片与语音",
     "group": "首页 · 病程记录",
     "origin": "合并模块需求",
-    "goal": "先选择语音或图片录入方式，再记录同一次经历、核对提取信息并保存；支持切换方式补充资料。",
+    "goal": "通过语音或图片记录同一次经历，保留原始资料，核对时间和描述后保存。",
     "interactions": [
       "新建时先从底部弹窗选择语音记录或上传图片记录，取消返回来源页。",
       "语音方式展示底部长按按钮，上滑取消；松开后转写和提取，等待期间显示加载弹窗。",
       "图片方式展示相册和拍照入口，上传后整理并回显原图及信息。",
-      "时间、症状、次数标红且支持修改；切换方式可补充另一种资料，不清空已有内容。",
+      "仅回显时间和描述并支持修改，不显示提取示例标签；切换方式可补充另一种资料，不清空已有内容。",
       "草稿或历史记录直接恢复对应方式，保存后可回看。"
     ],
     "modules": [
@@ -1415,9 +1350,9 @@
       },
       {
         "title": "图片信息提取与结果合并",
-        "description": "上传成功后显示 loading 弹窗，回显原始图片、三类关键信息和就诊/用药补充信息。",
+        "description": "上传后展示loading，结果保留原图，关键信息仅回显时间和描述。",
         "fields": "journeyUi.phase=uploading/extracting/idle；record.facts、visitInfo、extractedAt；journeyProvider().extract({kind,text,images,referenceAt,signal})。",
-        "logic": "本次继续采用用户已确认的 Demo：没有真实OCR或大模型调用。固定示例不视为上传材料的真实识别结果，页面保留提取示例标记。图片补全尚空的核心字段，并提供就诊用药字段；不覆盖用户手动修改的字段。原图不因模型失败而删除。"
+        "logic": "本次继续采用用户已确认的 Demo：没有真实OCR或大模型调用。当前为既有示例服务，不视为上传材料的真实识别结果；用户按本次意见移除提取示例标签。图片补全尚空的核心字段，就诊用药字段保留在内部原结果中，不再逐项展示；不覆盖用户手动修改的字段。原图不因模型失败而删除。"
       },
       {
         "title": "长按语音与微信样式弹窗",
@@ -1432,28 +1367,28 @@
         "logic": "两段异步任务均等待完成后才回显；取消或离页后晚到结果不能覆盖当前页。超时或失败关闭弹窗，保留已有图片、已完成转写文字和旧字段，提供重新整理或手动填写。转写本身未完成时需要重新记录或重试；正式版需接录音/ASR并保留音频，当前Demo没有实际音频文件。"
       },
       {
-        "title": "原始描述、核心字段与标红回显",
-        "description": "展示可修正的语音识别原文，以及时间、症状、次数的原文和提取值；整理描述随字段编辑同步更新。",
-        "fields": "originalTranscript：首次识别原文保留；originalText：可修正文本≤2000字；voiceSegments[]：id、text、referenceAt、durationMs；facts：timeOriginal、date(YYYY-MM-DD)、period、symptomsOriginal、symptoms、countOriginal、count。",
-        "logic": "所有提取字段可编辑。三类有效信息在整理描述中标红，缺失标待补充/未提及；未提及次数不填0。次数保留约三次/2—3次等不确定描述，不强制精确整数。相对日期以首次语音的北京时间 referenceAt 为锚点，历史回看不按今天重算；不明确日期可留空，填写时校验有效且不晚于当天。修正原文后可重新整理，明确手动改过的字段优先保留。 Demo支持昨天、前天、昨晚、今早等相对表述；最近等不明确日期留空。重新整理时，未手工修改但新原文不再包含的旧提取值会清空，避免错误沿用；明确手动修改的字段保留。"
+        "title": "原始资料与时间、描述",
+        "description": "保留原始图片和可修正的语音识别原文。关键信息不显示提取示例/手动核对标签，仅显示时间和描述两个可编辑字段。",
+        "fields": "facts.date：时间（YYYY-MM-DD）；record.description：描述，最多2000字；originalText/originalTranscript/images：原始资料；旧facts.timeOriginal/period/symptoms/count与visitInfo保留内部兼容。",
+        "logic": "时间和描述沿用红色关键内容样式，均可修改；时间校验有效且不晚于当天，未提取到日期可留空。描述初次由症状及次数等提取结果合并，图片优先使用材料摘要；缺失不编造。人工修改description加入edited/userEditedFields，后续图片/语音整理不覆盖人工描述。修正语音原文后重新整理，若未人工改过描述则按新结果更新。相对日期仍以首次语音referenceAt与北京时间为锚点。旧记录无description时，读取时组合已有摘要/症状/次数回显，不删除旧字段，不自动新增记录。"
       },
       {
-        "title": "图片与语音互补及就诊用药信息",
-        "description": "同一记录可同时包含图片和语音。就诊/用药补充字段折叠展示，也可全部编辑。",
-        "fields": "visitInfo：hospital、department、chiefComplaint、visitSummary、drugNames、dosageText、medicationPeriod、notes；journeyUi.edited；record.userEditedFields。",
-        "logic": "图片补充就诊和用药材料；语音优先更新未手动修改的核心字段。新增语音追加到识别原文，不删除原图片或已有描述；各段原文与时点分别保留。医院/科室/药品及备注可核对修改。不同日期或来源冲突由患者核对，不自动判定诊断、用药建议或病情严重程度。"
+        "title": "多来源互补与原结果保留",
+        "description": "同一记录可补充图片和语音；界面简化为时间和描述，不再展开医院、科室、药品等补充字段。",
+        "fields": "record.description；facts、visitInfo；journeyUi.edited；record.userEditedFields；images、originalText、voiceSegments。",
+        "logic": "模式切换和新增来源不删除原图、原话与既有内部提取字段。模型结果只更新未人工修改的数据；描述一旦人工修改，后续整理保留人工版本。医院/科室/药品等旧信息仍保存在记录内部，本次仅收起其编辑界面。不会据此新增诊断或用药建议。"
       },
       {
         "title": "草稿、保存与历史兼容",
         "description": "未完成内容保存为草稿，返回/刷新可恢复；确认保存后禁用重复保存，可再次新建。旧图片与语音记录统一可见。",
-        "fields": "state.journeyRecords[]；state.journeyDrafts 按new/recordId保存草稿；兼容 journeyDraft；record：id、createdAt、updatedAt、referenceAt、timeZone、images、originalText、originalTranscript、voiceSegments、facts、visitInfo、extractedAt、extractionSource、optimizedText、userEditedFields、legacy。；needsExtraction：新增或修正来源后需要重新整理；manualReview：手动核对状态。",
+        "fields": "state.journeyRecords[]；state.journeyDrafts 按new/recordId保存草稿；兼容 journeyDraft；record：id、createdAt、updatedAt、referenceAt、timeZone、images、originalText、originalTranscript、voiceSegments、facts、visitInfo、extractedAt、extractionSource、optimizedText、userEditedFields、legacy。；needsExtraction：新增或修正来源后需要重新整理；manualReview：手动核对状态。\nrecord.description与userEditedFields中的description一并保存；历史卡片和optimizedText读取核对后的描述。",
         "logic": "草稿输入300ms防抖保存，离页及时保存；草稿不计入历史数量。保存失败恢复原数组并保留修改，可重试；草稿保存失败离页提示真实丢失风险。首次保存新增，之后按同一ID更新，保留创建时间。旧voiceCases/documentCases通过voice:/image:前缀兼容映射；更新写新数组并按ID去重，旧数据不删除。记录与草稿共用主应用存储，注销/清除主存储同时清理。不自动写入猝倒趋势或今日用药任务。 未完成提取的草稿刷新后提供继续整理信息入口，不自动重复请求。确认保存视为已核对，不继续显示待整理状态。"
       }
     ],
     "pending": "正式录音/ASR/OCR/模型、音频持久化、云端材料存储、账号归属和医学审核待接入。与眠宝帮您中既有独立病历夹暂不做数据迁移，本次合并首页两个模块。",
-    "updatedAt": "2026-10-15T05:32:50.328640+00:00",
-    "data": "route=journey；route.caseId；journeyUi.mode=voice/image/null；modePickerOpen；record.inputMode；journeyHistory；journeyUi.key/record/dirty。\njourneyUi.mode/modePickerOpen；record.inputMode、images、originalText、facts、visitInfo；journeyUi.dirty。\nrecord.images[]：id、name、source(upload/camera)、dataUrl；journeyUpload.multiple；journeyCamera.capture=environment。\njourneyUi.phase=uploading/extracting/idle；record.facts、visitInfo、extractedAt；journeyProvider().extract({kind,text,images,referenceAt,signal})。\nphase=recording；holdStart、holdY、cancelVoice、holdTimer；voiceReferenceAt、voiceDuration；上滑阈值70px。\nphase=transcribing/extracting；controller、job、retryKind、retryReanalyse；服务接口 transcribe/extract；超时20秒。\noriginalTranscript：首次识别原文保留；originalText：可修正文本≤2000字；voiceSegments[]：id、text、referenceAt、durationMs；facts：timeOriginal、date(YYYY-MM-DD)、period、symptomsOriginal、symptoms、countOriginal、count。\nvisitInfo：hospital、department、chiefComplaint、visitSummary、drugNames、dosageText、medicationPeriod、notes；journeyUi.edited；record.userEditedFields。\nstate.journeyRecords[]；state.journeyDrafts 按new/recordId保存草稿；兼容 journeyDraft；record：id、createdAt、updatedAt、referenceAt、timeZone、images、originalText、originalTranscript、voiceSegments、facts、visitInfo、extractedAt、extractionSource、optimizedText、userEditedFields、legacy。；needsExtraction：新增或修正来源后需要重新整理；manualReview：手动核对状态。",
-    "logic": "首次新建自动弹出选择；点击暂不记录、遮罩或Escape返回来源页。选择语音显示长按按钮及语音说明；选择图片显示相册/拍照按钮和图片说明。主导航不在二级页展示。选择本身不产生业务记录；无内容刷新后重新选择。已有记录或有效草稿直接按inputMode恢复；旧记录按图片/语音来源推断，不再强制选择。\n切换只改变当前录入控件，不清空原图、原话、已提取字段或人工修改。切换弹窗取消/遮罩/Escape回到原方式；语音/提取处理中禁止切换。草稿与保存记录保留当前方式，旧数据兼容回看。保存后再记一条重新选择方式。\n最多4张、单张≤10MB，支持JPEG/PNG/WebP。数量/格式/大小校验后解码，最长边1280px，JPEG质量0.78；保存压缩图片。取消选择不改记录，批次处理失败不部分追加。设备决定摄像头或文件选择行为。移除图片保留已填写信息并提示核对；无任何来源时不能保存。\n本次继续采用用户已确认的 Demo：没有真实OCR或大模型调用。固定示例不视为上传材料的真实识别结果，页面保留提取示例标记。图片补全尚空的核心字段，并提供就诊用药字段；不覆盖用户手动修改的字段。原图不因模型失败而删除。\n按住至少500ms，太短提示重新按住；最长60秒自动结束。上滑70px以上松手取消，移回可继续；指针取消、失去捕获、Escape、窗口失焦或切到后台均取消，保留已有内容。触屏阻止滚动与系统长按菜单；支持空格/回车长按及辅助技术激活。Demo展示录音交互和固定转写，不采集真实麦克风或音频。\n两段异步任务均等待完成后才回显；取消或离页后晚到结果不能覆盖当前页。超时或失败关闭弹窗，保留已有图片、已完成转写文字和旧字段，提供重新整理或手动填写。转写本身未完成时需要重新记录或重试；正式版需接录音/ASR并保留音频，当前Demo没有实际音频文件。\n所有提取字段可编辑。三类有效信息在整理描述中标红，缺失标待补充/未提及；未提及次数不填0。次数保留约三次/2—3次等不确定描述，不强制精确整数。相对日期以首次语音的北京时间 referenceAt 为锚点，历史回看不按今天重算；不明确日期可留空，填写时校验有效且不晚于当天。修正原文后可重新整理，明确手动改过的字段优先保留。 Demo支持昨天、前天、昨晚、今早等相对表述；最近等不明确日期留空。重新整理时，未手工修改但新原文不再包含的旧提取值会清空，避免错误沿用；明确手动修改的字段保留。\n图片补充就诊和用药材料；语音优先更新未手动修改的核心字段。新增语音追加到识别原文，不删除原图片或已有描述；各段原文与时点分别保留。医院/科室/药品及备注可核对修改。不同日期或来源冲突由患者核对，不自动判定诊断、用药建议或病情严重程度。\n草稿输入300ms防抖保存，离页及时保存；草稿不计入历史数量。保存失败恢复原数组并保留修改，可重试；草稿保存失败离页提示真实丢失风险。首次保存新增，之后按同一ID更新，保留创建时间。旧voiceCases/documentCases通过voice:/image:前缀兼容映射；更新写新数组并按ID去重，旧数据不删除。记录与草稿共用主应用存储，注销/清除主存储同时清理。不自动写入猝倒趋势或今日用药任务。 未完成提取的草稿刷新后提供继续整理信息入口，不自动重复请求。确认保存视为已核对，不继续显示待整理状态。"
+    "updatedAt": "2026-10-15T05:47:12.891807+00:00",
+    "data": "route=journey；route.caseId；journeyUi.mode=voice/image/null；modePickerOpen；record.inputMode；journeyHistory；journeyUi.key/record/dirty。\njourneyUi.mode/modePickerOpen；record.inputMode、images、originalText、facts、visitInfo；journeyUi.dirty。\nrecord.images[]：id、name、source(upload/camera)、dataUrl；journeyUpload.multiple；journeyCamera.capture=environment。\njourneyUi.phase=uploading/extracting/idle；record.facts、visitInfo、extractedAt；journeyProvider().extract({kind,text,images,referenceAt,signal})。\nphase=recording；holdStart、holdY、cancelVoice、holdTimer；voiceReferenceAt、voiceDuration；上滑阈值70px。\nphase=transcribing/extracting；controller、job、retryKind、retryReanalyse；服务接口 transcribe/extract；超时20秒。\nfacts.date：时间（YYYY-MM-DD）；record.description：描述，最多2000字；originalText/originalTranscript/images：原始资料；旧facts.timeOriginal/period/symptoms/count与visitInfo保留内部兼容。\nrecord.description；facts、visitInfo；journeyUi.edited；record.userEditedFields；images、originalText、voiceSegments。\nstate.journeyRecords[]；state.journeyDrafts 按new/recordId保存草稿；兼容 journeyDraft；record：id、createdAt、updatedAt、referenceAt、timeZone、images、originalText、originalTranscript、voiceSegments、facts、visitInfo、extractedAt、extractionSource、optimizedText、userEditedFields、legacy。；needsExtraction：新增或修正来源后需要重新整理；manualReview：手动核对状态。\nrecord.description与userEditedFields中的description一并保存；历史卡片和optimizedText读取核对后的描述。",
+    "logic": "首次新建自动弹出选择；点击暂不记录、遮罩或Escape返回来源页。选择语音显示长按按钮及语音说明；选择图片显示相册/拍照按钮和图片说明。主导航不在二级页展示。选择本身不产生业务记录；无内容刷新后重新选择。已有记录或有效草稿直接按inputMode恢复；旧记录按图片/语音来源推断，不再强制选择。\n切换只改变当前录入控件，不清空原图、原话、已提取字段或人工修改。切换弹窗取消/遮罩/Escape回到原方式；语音/提取处理中禁止切换。草稿与保存记录保留当前方式，旧数据兼容回看。保存后再记一条重新选择方式。\n最多4张、单张≤10MB，支持JPEG/PNG/WebP。数量/格式/大小校验后解码，最长边1280px，JPEG质量0.78；保存压缩图片。取消选择不改记录，批次处理失败不部分追加。设备决定摄像头或文件选择行为。移除图片保留已填写信息并提示核对；无任何来源时不能保存。\n本次继续采用用户已确认的 Demo：没有真实OCR或大模型调用。当前为既有示例服务，不视为上传材料的真实识别结果；用户按本次意见移除提取示例标签。图片补全尚空的核心字段，就诊用药字段保留在内部原结果中，不再逐项展示；不覆盖用户手动修改的字段。原图不因模型失败而删除。\n按住至少500ms，太短提示重新按住；最长60秒自动结束。上滑70px以上松手取消，移回可继续；指针取消、失去捕获、Escape、窗口失焦或切到后台均取消，保留已有内容。触屏阻止滚动与系统长按菜单；支持空格/回车长按及辅助技术激活。Demo展示录音交互和固定转写，不采集真实麦克风或音频。\n两段异步任务均等待完成后才回显；取消或离页后晚到结果不能覆盖当前页。超时或失败关闭弹窗，保留已有图片、已完成转写文字和旧字段，提供重新整理或手动填写。转写本身未完成时需要重新记录或重试；正式版需接录音/ASR并保留音频，当前Demo没有实际音频文件。\n时间和描述沿用红色关键内容样式，均可修改；时间校验有效且不晚于当天，未提取到日期可留空。描述初次由症状及次数等提取结果合并，图片优先使用材料摘要；缺失不编造。人工修改description加入edited/userEditedFields，后续图片/语音整理不覆盖人工描述。修正语音原文后重新整理，若未人工改过描述则按新结果更新。相对日期仍以首次语音referenceAt与北京时间为锚点。旧记录无description时，读取时组合已有摘要/症状/次数回显，不删除旧字段，不自动新增记录。\n模式切换和新增来源不删除原图、原话与既有内部提取字段。模型结果只更新未人工修改的数据；描述一旦人工修改，后续整理保留人工版本。医院/科室/药品等旧信息仍保存在记录内部，本次仅收起其编辑界面。不会据此新增诊断或用药建议。\n草稿输入300ms防抖保存，离页及时保存；草稿不计入历史数量。保存失败恢复原数组并保留修改，可重试；草稿保存失败离页提示真实丢失风险。首次保存新增，之后按同一ID更新，保留创建时间。旧voiceCases/documentCases通过voice:/image:前缀兼容映射；更新写新数组并按ID去重，旧数据不删除。记录与草稿共用主应用存储，注销/清除主存储同时清理。不自动写入猝倒趋势或今日用药任务。 未完成提取的草稿刷新后提供继续整理信息入口，不自动重复请求。确认保存视为已核对，不继续显示待整理状态。"
   },
   "articleDetail": {
     "title": "患教文章详情",
@@ -1467,9 +1402,9 @@
     "modules": [
       {
         "title": "文章基本信息",
-        "description": "显示分类、预计阅读时长、标题和摘要。",
-        "fields": "route.articleId；article.id、category、read、title、summary。",
-        "logic": "以 articleId 查找文章；不编造作者、发布日期或审核信息。无法查到时提示文章暂不可用，提供返回知识中心入口。"
+        "description": "显示分类、年月日格式的发布日期、预计阅读时长、标题和摘要。",
+        "fields": "route.articleId；article.id、category、publishedAt、read、title、summary。",
+        "logic": "以articleId查找文章；日期与列表读取同一publishedAt，按年月日展示。当前日期为用户同意使用的固定示例日期，正式版读取内容服务，不编造作者或医学审核信息。日期缺失时隐藏。无对应文章时提示暂不可用，并提供返回知识中心入口。"
       },
       {
         "title": "文章正文",
@@ -1485,9 +1420,9 @@
       }
     ],
     "pending": "云端文章详情、失效/下架状态及正文格式管理待后续接口定义。",
-    "updatedAt": "2026-10-14T09:33:52.637667+00:00",
-    "data": "route.articleId；article.id、category、read、title、summary。\narticle.sections[][]：每项为小标题和正文文本。\nstack、knowledgeFilter、knowledgeScrollTop。",
-    "logic": "以 articleId 查找文章；不编造作者、发布日期或审核信息。无法查到时提示文章暂不可用，提供返回知识中心入口。\n完整显示所选文章内容；标题和正文按文本转义后渲染。页面不提供诊断、剂量调整或申请提交等操作；不产生患者记录。\n正常从列表进入时返回上一层，保留分类与位置。失效 ID 的返回知识中心按钮直接打开列表。当前不保存已读、阅读时长、收藏或分享记录。"
+    "updatedAt": "2026-10-15T05:52:37.672928+00:00",
+    "data": "route.articleId；article.id、category、publishedAt、read、title、summary。\narticle.sections[][]：每项为小标题和正文文本。\nstack、knowledgeFilter、knowledgeScrollTop。",
+    "logic": "以articleId查找文章；日期与列表读取同一publishedAt，按年月日展示。当前日期为用户同意使用的固定示例日期，正式版读取内容服务，不编造作者或医学审核信息。日期缺失时隐藏。无对应文章时提示暂不可用，并提供返回知识中心入口。\n完整显示所选文章内容；标题和正文按文本转义后渲染。页面不提供诊断、剂量调整或申请提交等操作；不产生患者记录。\n正常从列表进入时返回上一层，保留分类与位置。失效 ID 的返回知识中心按钮直接打开列表。当前不保存已读、阅读时长、收藏或分享记录。"
   },
   "journeyHistory": {
     "title": "病程记录列表",
@@ -1501,9 +1436,9 @@
     "modules": [
       {
         "title": "全部记录与卡片信息",
-        "description": "不显示全部/图片/语音筛选标签；按更新时间倒序展示所有卡片。卡片内用普通文字显示记录方式，另展示图片缩略图或语音图标、日期、症状、次数与保存时间。",
-        "fields": "allJourneyRecords()；id、updatedAt/createdAt、images、originalText、facts；journeyType(record)返回图片/语音/图片+语音。",
-        "logic": "按稳定ID去重；混合记录在统一列表中只显示一次。来源类型只作为卡片文字，不再作为筛选标签或徽章。没有次数显示未提及，不视为0次。列表仅显示已成功保存记录，不计草稿；不展示新增语音病历按钮。"
+        "description": "按更新时间倒序展示全部卡片；卡片显示记录方式、日期、描述摘要与保存时间，不显示顶部类型筛选或徽章。",
+        "fields": "allJourneyRecords()；id、updatedAt/createdAt、images、originalText、facts；journeyType(record)返回图片/语音/图片+语音。\nrecord.description；journeyDescription(record)：兼容旧记录摘要。",
+        "logic": "按稳定ID去重；混合记录只显示一次。来源用普通文字展示。卡片描述读取核对后保存的description，旧记录组合原摘要、症状与次数；描述过长显示两行，完整内容到详情回看。仅显示成功保存记录，不含草稿。"
       },
       {
         "title": "旧记录兼容与编辑回看",
@@ -1513,16 +1448,16 @@
       }
     ],
     "pending": "历史分页、单条删除、跨设备同步、眠宝内病历夹数据统一待后续需求定义。",
-    "updatedAt": "2026-10-15T05:32:50.328640+00:00",
-    "data": "allJourneyRecords()；id、updatedAt/createdAt、images、originalText、facts；journeyType(record)返回图片/语音/图片+语音。\nlegacy.kind/id；voice:旧ID、image:旧ID；route.caseId；journeyDrafts[recordId]。",
-    "logic": "按稳定ID去重；混合记录在统一列表中只显示一次。来源类型只作为卡片文字，不再作为筛选标签或徽章。没有次数显示未提及，不视为0次。列表仅显示已成功保存记录，不计草稿；不展示新增语音病历按钮。\n只读映射旧数组，不破坏原始历史；覆盖修改以相同稳定ID写新数组，合并读取时新值优先，避免双份显示。回看不重新调用提取，不重算相对日期；未保存编辑可从草稿恢复。顶端返回回到来源页面。"
+    "updatedAt": "2026-10-15T05:47:12.891807+00:00",
+    "data": "allJourneyRecords()；id、updatedAt/createdAt、images、originalText、facts；journeyType(record)返回图片/语音/图片+语音。\nrecord.description；journeyDescription(record)：兼容旧记录摘要。\nlegacy.kind/id；voice:旧ID、image:旧ID；route.caseId；journeyDrafts[recordId]。",
+    "logic": "按稳定ID去重；混合记录只显示一次。来源用普通文字展示。卡片描述读取核对后保存的description，旧记录组合原摘要、症状与次数；描述过长显示两行，完整内容到详情回看。仅显示成功保存记录，不含草稿。\n只读映射旧数组，不破坏原始历史；覆盖修改以相同稳定ID写新数组，合并读取时新值优先，避免双份显示。回看不重新调用提取，不重算相对日期；未保存编辑可从草稿恢复。顶端返回回到来源页面。"
   }
 }
 </script>
-  <script src="requirements.js?v=record-method-feedback-20261015"></script>
-  <script src="modules.js?v=record-method-feedback-20261015"></script>
-  <script src="knowledge.js?v=record-method-feedback-20261015"></script>
-  <script src="journey-records.js?v=record-method-feedback-20261015"></script>
-  <script src="app.js?v=record-method-feedback-20261015"></script>
+  <script src="requirements.js?v=archive-drug-cards-20261015"></script>
+  <script src="modules.js?v=archive-drug-cards-20261015"></script>
+  <script src="knowledge.js?v=archive-drug-cards-20261015"></script>
+  <script src="journey-records.js?v=archive-drug-cards-20261015"></script>
+  <script src="app.js?v=archive-drug-cards-20261015"></script>
 </body>
 </html>

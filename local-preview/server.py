@@ -171,5 +171,5 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     server = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"眠宝原型运行于 http://127.0.0.1:{PORT}/", flush=True)
+    print(f"发作性睡病之家运行于 http://127.0.0.1:{PORT}/", flush=True)
     server.serve_forever()

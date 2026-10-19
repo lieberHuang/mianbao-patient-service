@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f5f9fc">
-  <title>眠宝帮您</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="embedded.css">
+  <title>眠宝帮您 · 发作性睡病之家</title>
+  <link rel="stylesheet" href="styles.css?v=assistant-education-20261019">
+  <link rel="stylesheet" href="embedded.css?v=assistant-education-20261019">
 </head>
 <body>
   <div class="desktop-layout">
     <aside class="notes-panel" id="notesPanel" aria-label="演示说明编辑区">
-      <div class="panel-heading"><div><span class="eyebrow">KnowDrug · 患者服务</span><h2>演示说明</h2></div><span class="notes-icon" aria-hidden="true">✎</span></div>
+      <div class="panel-heading"><div><span class="eyebrow">发作性睡病之家 · 眠宝帮您</span><h2>演示说明</h2></div><span class="notes-icon" aria-hidden="true">✎</span></div>
       <p class="panel-desc">记录演示要点、需求补充或评审意见。</p>
       <label class="sr-only" for="notesInput">填写演示说明</label>
       <textarea id="notesInput" maxlength="20000" placeholder="在这里写入说明…&#10;&#10;例如：&#10;· 本次需要演示的流程&#10;· 当前场景的说明&#10;· 需要确认的业务规则" spellcheck="false"></textarea>
@@ -25,26 +25,26 @@
     <div class="device-viewport">
     <main class="device" id="device">
       <div class="phone-statusbar" aria-hidden="true"><span>9:41</span><div class="dynamic-island"></div><div class="phone-status-icons"><svg viewBox="0 0 24 16"><path d="M2 14v-3m5 3V8m5 6V5m5 9V2"/><path d="M21 3h1v9h-1"/></svg><span class="phone-battery"></span></div></div>
+      <section id="assistantPaymentPage" class="assistant-payment-page" aria-label="创新支付" hidden></section>
       <header class="app-header">
         <div class="app-logo" id="appLogo"><img src="assets/mianbao-doctor.webp" alt="眠宝"></div>
-        <div class="header-copy"><h2 id="headerTitle">NT1阵发性睡病助手</h2><span id="headerBadge">已确诊患者通道</span></div>
+        <div class="header-copy"><h2 id="headerTitle">眠宝帮您</h2><span id="headerBadge">发作性睡病之家</span></div>
         <button class="avatar" id="profileButton" aria-label="打开我的服务"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#E5ECFF"/><circle cx="22" cy="17" r="7" fill="#7E94CF"/><path d="M9 40c0-10 5-15 13-15s13 5 13 15" fill="#4266B2"/></svg></button>
       </header>
-      <section class="app-body" id="appBody" aria-label="患者服务内容"></section>
+      <section class="app-body" id="appBody" aria-label="发作性睡病之家 · 眠宝服务内容"></section>
       <div class="chat-bottom" id="chatBottom">
-        <div class="conversation-actions" id="conversationActions" aria-label="快捷服务，可左右滑动" hidden><button id="paymentFloat" class="conversation-action"></button><button class="conversation-action" data-action="recordJourney">记录病程</button><button class="conversation-action" data-action="medications">用药记录</button><button class="conversation-action" data-action="call">真人客服</button></div>
+        <div class="conversation-actions" id="conversationActions" aria-label="快捷服务，可左右滑动" hidden><button id="paymentFloat" class="conversation-action"></button><button class="conversation-action" data-action="recordJourney">记录病程</button><button class="conversation-action" data-action="medications">用药记录</button><button class="conversation-action" data-action="call">真人客服</button><button class="conversation-action" data-action="education">健康科普</button></div>
         <div id="composerContext" class="composer-context" hidden></div>
         <div id="composerTools" class="composer-tools"></div>
         <input id="composerImageInput" type="file" accept="image/*" hidden>
         <form class="composer" id="chatForm">
-          <label class="sr-only" for="chatInput">输入您的问题</label>
+          <button id="assistantVoiceButton" class="assistant-composer-icon" type="button" aria-label="发送语音" title="语音输入"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 10v4m4-7v10m4-7v4"/></svg></button><label class="sr-only" for="chatInput">输入您的问题</label>
           <input id="chatInput" autocomplete="off" placeholder="咨询用药、疾病或创新支付…" maxlength="2000">
-          <button class="send-button" type="submit" aria-label="发送问题"></button>
+          <button id="assistantImageButton" class="assistant-composer-icon" type="button" aria-label="发送图片" title="发送图片"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="4"/><circle cx="8" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg></button><button class="send-button" type="submit" aria-label="发送问题"></button>
         </form>
       </div>
-      <div class="modal-root" id="modalRoot"></div>
+      <div class="modal-root" id="modalRoot"></div><dialog id="assistantWorkflowDialog" class="assistant-workflow-dialog" aria-labelledby="assistantWorkflowTitle"></dialog>
       <div class="toast" id="toast" role="status" hidden></div>
-      <button class="mobile-demo-button" id="mobileDemoButton" aria-label="打开服务状态设置">状态</button>
     </main>
     </div>
     <div class="device-caption">iPhone 17 · 402 × 874 模拟视口 <span id="deviceScaleLabel"></span></div>
@@ -78,8 +78,8 @@
   </div>
   <section class="compact-notes" id="compactNotes" hidden><button id="compactNotesButton">✎ 编辑演示说明</button></section>
   
-  <script src="care.js?v=local-records-20261014"></script>
-  <script src="app.js?v=local-records-20261014"></script>
-  <script src="embedded.js"></script>
+  <script src="care.js?v=assistant-education-20261019"></script>
+  <script src="app.js?v=assistant-education-20261019"></script>
+  <script src="embedded.js?v=assistant-education-20261019"></script>
 </body>
 </html>

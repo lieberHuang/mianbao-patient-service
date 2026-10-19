@@ -600,3 +600,24 @@ body { gap: clamp(12px,1.8vw,26px); padding: 12px; }
 .archive-drug-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .archive-drug-card{position:relative;display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:61px;border:1px solid #dce6f5;border-radius:14px;padding:12px 11px;background:#f7faff;font-size:12px;line-height:1.55;cursor:pointer}
 .archive-drug-card input{position:absolute;opacity:0;width:1px;height:1px}.archive-drug-card i{display:grid;place-items:center;flex:none;width:17px;height:17px;border:1px solid #c8d6ed;border-radius:6px;color:transparent;font-size:11px;font-style:normal}.archive-drug-card:has(input:checked){border-color:var(--blue);background:#eaf1ff;color:#2255b4}.archive-drug-card:has(input:checked) i{border-color:var(--blue);background:var(--blue);color:white}.archive-drug-card:has(input:focus-visible){outline:2px solid #5986e1;outline-offset:3px}.archive-drug-card--none{grid-column:1/-1;min-height:52px}
+
+/* 发作性睡病之家：应用品牌与眠宝陪伴引导。 */
+.login-brand{flex-direction:column;gap:8px;font-size:27px;line-height:1.4}.login-brand span{border:0;padding:0;font-size:12px}.login-guide{margin:11px 0 0;color:#6382ad;font-size:12px;line-height:1.9}.login-mascot{height:260px;margin:22px auto 14px}
+.req-brand{flex-direction:column;align-items:flex-start;gap:5px;font-size:18px;line-height:1.45;min-width:0}.req-brand span{border:0;padding:0;font-size:10px}
+.page-head--home .sub{margin-top:7px;font-size:12px}.journey-review-guide{margin:0 0 12px}
+@media(max-height:700px){.page--login{gap:22px;padding-top:23px}.login-mascot{height:190px;margin:12px auto}.login-guide{margin-top:7px}.login-welcome h1{font-size:19px}}
+@media(max-width:350px){.login-brand{font-size:24px}.page-head--home h1{font-size:22px}}
+.page-head--home{display:block}
+
+/* 左侧说明工具：清空眠宝历史会话。 */
+.req-chat-actions{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+.req-clear-chat{width:100%;min-height:42px;padding:10px 15px;border:1px solid #c8d8f1;border-radius:12px;background:#fff;color:#3269d7;font-size:13px;font-weight:700;cursor:pointer}
+.req-clear-chat:hover{background:#edf4ff}.req-clear-chat:focus-visible{outline:2px solid #5986e1;outline-offset:3px}.req-clear-chat:disabled{opacity:.6;cursor:wait}.req-chat-actions p{margin:9px 0 0;color:#7a8ba5;font-size:10px;line-height:1.8}
+
+/* Assistant record sheet only; normal page layouts remain unchanged. */
+body.assistant-journey-embed{display:block;width:100%;height:100dvh;min-height:0;padding:0;margin:0;overflow:hidden;background:var(--bg)}
+.assistant-journey-embed>.requirement-panel,.assistant-journey-embed>.feedback-panel,.assistant-journey-embed>#feedback-toggle{display:none!important}
+.assistant-journey-embed>.device{width:100%;height:100%;min-height:0;border:0;border-radius:0;box-shadow:none;margin:0}
+.assistant-journey-embed .device__status,.assistant-journey-embed #tabbar{display:none!important}
+.assistant-journey-embed .device .app{height:100%!important;width:100%}.assistant-journey-embed .journey-record-header{padding-top:12px}
+.assistant-journey-embed .journey-record-header{padding:12px 14px;gap:8px}.assistant-journey-embed .journey-record-header h1{font-size:17px}.assistant-journey-embed .journey-history-link{position:static;padding:8px 0 8px 5px}

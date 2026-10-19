@@ -1,4 +1,7 @@
 /* 本地交互原型：无接口、无真实医疗或支付服务。 */
+const APP_NAME = '发作性睡病之家';
+const assistantMedicationEmbed=window.parent!==window&&new URLSearchParams(location.search).get('assistantMedication')==='1';
+const assistantJourneyEmbed=window.parent!==window&&new URLSearchParams(location.search).get('assistantJourney')==='1';
 const $ = (s, root=document) => root.querySelector(s);
 const app = $('#app');
 const tabbar = $('#tabbar');
@@ -24,10 +27,12 @@ if(!Array.isArray(state.voiceCases))state.voiceCases=[];
 if(!state.loginSession?.phoneAuthorized&&state.authStatus!=='closed')state.authStatus='signed-out';
 let route={name:state.authStatus==='closed'?'mine':state.authStatus==='active'?'home':'login'}, stack=[], essStep=0, essAnswers=Array(8).fill(null), napTimer=null, napRemaining=0, napStarted=false, gameState=null, toastTimer;
 let sheet=state.authStatus==='active'&&state.onboardingPending?'archiveGuide':null, weekOffset=0, activeScale='ESS', pharmacyLocation=null, pharmacyStores=[], pharmacyLoading=false, pharmacyError='', photoPreviewUrl='';
+if(assistantJourneyEmbed||assistantMedicationEmbed){document.body.classList.add('assistant-journey-embed');if(state.authStatus==='active')route={name:assistantMedicationEmbed?'medReminder':'journey',...(new URLSearchParams(location.search).get('caseId')?{caseId:new URLSearchParams(location.search).get('caseId')}:{})};sheet=null;}
 let homePreviewState=null, specialPreviewState=null;
 let voiceRecognition=null, voiceListening=false, composeDraft='', composeKey=null;
 let editingDescriptionKey=null, editingModuleIndex=0, descriptionDraft=null, descriptionDirty=false, descriptionSaving=false;
 let feedbackKey=null, feedbackDraft='', feedbackDirty=false, feedbackSaving=false;
+let chatHistoryClearing=false;
 const store=()=>localStorage.setItem('mianbao-prototype-v1',JSON.stringify(state));
 const hasToday=(arr)=>arr.some(x=>x.day===today());
 function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2700)}
@@ -46,7 +51,7 @@ function allowDescriptionLeave(next){
   return true;
 }
 function go(name,data={}){if(name==='voiceCase'){name='journey';if(data.caseId)data={...data,caseId:'voice:'+data.caseId}}if(name==='voiceCaseHistory')name='journeyHistory';if(state.authStatus!=='active'&&!['mine','login'].includes(name))return toast('请先重新进入');const next={name,...data};if(!allowDescriptionLeave(next))return;stack.push(route);route=next;sheet=name==='pharmacy'?'location':null;render();app.scrollTop=0}
-function back(){const next=stack.at(-1)||{name:'home'};if(!allowDescriptionLeave(next))return;route=stack.pop()||{name:'home'};sheet=null;render();app.scrollTop=0}
+function back(){if((assistantJourneyEmbed||assistantMedicationEmbed)&&!stack.length){if(window.prepareAssistantJourneyClose())window.parent.postMessage({type:'mianbao-journey-close'},location.origin);return;}const next=stack.at(-1)||{name:'home'};if(!allowDescriptionLeave(next))return;route=stack.pop()||{name:'home'};sheet=null;render();app.scrollTop=0}
 function tab(name){if(state.authStatus!=='active'&&!['mine','login'].includes(name))return toast('请先重新进入');const next={name};if(!allowDescriptionLeave(next))return;stack=[];route=next;sheet=null;render();app.scrollTop=0}
 function header(title,sub=''){return `<header class="detail-head"><button class="back" data-action="back" aria-label="返回">‹</button><div><h1>${esc(title)}</h1>${sub?`<p>${esc(sub)}</p>`:''}</div></header>`}
 function card(content,extra=''){return `<section class="card ${extra}">${content}</section>`}
@@ -67,6 +72,27 @@ function monthCount(offset=0){const now=new Date(),d=new Date(now.getFullYear(),
 function monthMood(){if(specialPreviewState)return specialPreviewState;const prior=monthCount(-1),current=monthCount();return prior===0?'none':current<prior?'down':current>prior?'up':'same'}
 const tabs=[['home','⌂','首页'],['special','▧','健康档案'],['ai','✦','眠宝帮您'],['rights','▤','知识中心'],['mine','♙','我的']];
 function renderTabs(){const active=tabs.some(t=>t[0]===route.name)?route.name:null;tabbar.innerHTML=tabs.map(([id,icon,label])=>`<button class="tab ${active===id?'active':''}" data-tab="${id}" ${active===id?'aria-current="page"':''} ${state.authStatus!=='active'&&id!=='mine'?'disabled':''}><span class="icon">${icon}</span><span>${label}</span></button>`).join('')}
+function chatHistoryActionsMarkup(){return `<section class="req-chat-actions"><button type="button" class="req-clear-chat" data-clear-service-chat ${chatHistoryClearing?'disabled aria-busy="true"':''}>${chatHistoryClearing?'正在清空…':'清空聊天记录'}</button><p>清空眠宝帮您中的会话，保留已保存的病程、用药和申请记录。</p></section>`}
+async function clearMianbaoChatHistory(){
+ if(chatHistoryClearing)return;
+ chatHistoryClearing=true;
+ const updateButtons=()=>document.querySelectorAll('[data-clear-service-chat]').forEach(button=>{button.disabled=chatHistoryClearing;button.textContent=chatHistoryClearing?'正在清空…':'清空聊天记录';button.setAttribute('aria-busy',String(chatHistoryClearing))});
+ updateButtons();let temporaryFrame=null;
+ try{
+  let serviceWindow=$('#mianbaoServiceFrame')?.contentWindow;
+  if(typeof serviceWindow?.clearMianbaoChatHistory!=='function'){
+   temporaryFrame=document.createElement('iframe');temporaryFrame.hidden=true;temporaryFrame.tabIndex=-1;temporaryFrame.title='眠宝会话清理';temporaryFrame.setAttribute('aria-hidden','true');
+   await new Promise((resolve,reject)=>{const timer=setTimeout(()=>finish(new Error('眠宝服务加载超时，请重试')),15000);const finish=error=>{clearTimeout(timer);temporaryFrame.onload=null;temporaryFrame.onerror=null;error?reject(error):resolve()};temporaryFrame.onload=()=>finish();temporaryFrame.onerror=()=>finish(new Error('眠宝服务加载失败，请重试'));temporaryFrame.src='mianbao-service/index.html?v=assistant-education-20261019';document.body.append(temporaryFrame)});
+   serviceWindow=temporaryFrame.contentWindow;
+  }
+  if(typeof serviceWindow?.clearMianbaoChatHistory!=='function')throw new Error('眠宝服务尚未就绪，请刷新后重试');
+  if(!await serviceWindow.clearMianbaoChatHistory())throw new Error('聊天记录清空失败，原记录已保留，请重试');
+  if(temporaryFrame&&$('#mianbaoServiceFrame'))$('#mianbaoServiceFrame').contentWindow.location.reload();
+  toast('眠宝帮您的聊天记录已清空');
+ }catch(error){toast(error.message||'清空失败，请重试')}
+ finally{temporaryFrame?.remove();chatHistoryClearing=false;updateButtons()}
+}
+document.addEventListener('click',event=>{if(event.target.closest('[data-clear-service-chat]'))clearMianbaoChatHistory()});
 function renderRequirements(){
   const key=descriptionKey(route);
   const req=pageRequirement();
@@ -75,7 +101,7 @@ function renderRequirements(){
   const previousScroll=panel.scrollTop;
   if(editingDescriptionKey===key){
     const draft=descriptionDraft;
-    panel.innerHTML=`<div class="req-header"><div class="req-brand">眠宝<span>患者服务</span></div><span class="req-live"><i></i> 编辑说明</span></div>
+    panel.innerHTML=`<div class="req-header"><div class="req-brand">${APP_NAME}<span>眠宝陪伴您的每一天</span></div><span class="req-live"><i></i> 编辑说明</span></div>
       <div class="req-location">${esc(req.group)} <span>／</span> 编辑当前页面</div>
       <h2 class="req-edit-title">编辑页面说明</h2>
       <p class="req-edit-help">保存后写入 index.html，仅更新左侧说明，不改变中间页面的交互与样式。</p>
@@ -97,11 +123,11 @@ function renderRequirements(){
         <label>状态与逻辑 <small>每行一项</small><textarea name="logic" rows="6">${esc(draft.logic)}</textarea></label>
         <label>接口与待接入<textarea name="pending" rows="4">${esc(draft.pending)}</textarea></label>
         <div class="req-edit-actions"><button type="button" class="req-cancel" data-requirement-action="cancel" ${descriptionSaving?'disabled':''}>取消</button><button type="submit" class="req-save" ${descriptionSaving?'disabled':''}>${descriptionSaving?'正在保存…':'保存说明'}</button></div>
-      </form>${feedback?`<section class="req-section req-section--feedback"><h3>本页修改意见 <span>${pageFeedback[key]?.appliedAt?'已按意见调整':'待统一调整'}</span></h3><p>${esc(feedback).replace(/\n/g,'<br>')}</p></section>`:''}`;
+      </form>${feedback?`<section class="req-section req-section--feedback"><h3>本页修改意见 <span>${pageFeedback[key]?.appliedAt?'已按意见调整':'待统一调整'}</span></h3><p>${esc(feedback).replace(/\n/g,'<br>')}</p></section>`:''}${chatHistoryActionsMarkup()}`;
     panel.scrollTop=previousScroll;
     return;
   }
-  panel.innerHTML=`<div class="req-header"><div class="req-brand">眠宝<span>患者服务</span></div><span class="req-live"><i></i> 页面需求</span></div>
+  panel.innerHTML=`<div class="req-header"><div class="req-brand">${APP_NAME}<span>眠宝陪伴您的每一天</span></div><span class="req-live"><i></i> 页面需求</span></div>
     <div class="req-location">${esc(req.group)} <span>／</span> 当前页面</div>
     <div class="req-title-row"><h2>${esc(req.title)}</h2><div class="req-title-actions"><span class="req-origin">${descriptionOverrides[key]?'已自定义':'默认说明'} · ${esc(req.origin)}</span><button type="button" class="req-edit-button" data-requirement-action="edit">编辑说明</button>${descriptionOverrides[key]?'<button type="button" class="req-reset-button" data-requirement-action="reset">恢复默认</button>':''}</div></div>
     <p class="req-goal">${esc(req.goal)}</p>
@@ -113,7 +139,7 @@ function renderRequirements(){
       <section class="req-section req-section--pending"><h3>接口与待接入</h3><p>${esc(req.pending)}</p></section>
     </details>
     ${feedback?`<section class="req-section req-section--feedback"><h3>本页修改意见 <span>${pageFeedback[key]?.appliedAt?'已按意见调整':'待统一调整'}</span></h3><p>${esc(feedback).replace(/\n/g,'<br>')}</p></section>`:''}
-    <div class="req-footer"><span class="key-dot"></span> 页面说明与修改意见均写入项目文件</div>`;
+    <div class="req-footer"><span class="key-dot"></span> 页面说明与修改意见均写入项目文件</div>${chatHistoryActionsMarkup()}`;
   panel.scrollTop=0;
 }
 function renderFeedback(){
@@ -235,13 +261,13 @@ function renderSheet(){
   let body='',title='';
   if(sheet==='loginTerms'||sheet==='loginPrivacy'){
     const privacy=sheet==='loginPrivacy';title=privacy?'隐私政策':'用户协议';
-    body=`<div class="protocol-dialog-copy"><h3>${privacy?'请了解您的信息如何使用':'欢迎使用眠宝患者服务'}</h3><p>${privacy?'登录流程将请求手机号授权；建档时填写的确诊时间与当前使用药物用于建立您的健康档案。':'眠宝提供信息查询、病程与用药记录、服务流程查询。请按实际情况填写信息，医疗与用药问题请咨询医生或药师。'}</p><p class="protocol-draft-note">${privacy?'正式隐私政策正文待提供。':'正式用户协议正文待提供。'}</p></div><button class="btn full" data-action="closeSheet">我知道了</button>`;
+    body=`<div class="protocol-dialog-copy"><h3>${privacy?'请了解您的信息如何使用':`欢迎使用${APP_NAME}`}</h3><p>${privacy?'登录流程将请求手机号授权；建档时填写的确诊时间与当前使用药物用于建立您的健康档案。':`${APP_NAME}提供信息查询、病程与用药记录、服务流程查询，由眠宝陪您使用。请按实际情况填写信息，医疗与用药问题请咨询医生或药师。`}</p><p class="protocol-draft-note">${privacy?'正式隐私政策正文待提供。':'正式用户协议正文待提供。'}</p></div><button class="btn full" data-action="closeSheet">我知道了</button>`;
   }else if(sheet==='wechatPhone'){
     title='微信手机号授权';
-    body=`<div class="wechat-permission-app"><img src="assets/mianbao-lamb.webp" alt="眠宝"><strong>眠宝患者服务</strong><span>申请</span></div><h3 class="wechat-permission-title">获取你的手机号</h3><p class="wechat-permission-purpose">用于识别你的账号并完成登录</p><div class="wechat-phone-number"><strong>138 **** 0000</strong><span>微信绑定手机号</span><i aria-hidden="true">✓</i></div><div class="wechat-permission-actions"><button data-action="denyWechatPhone">拒绝</button><button data-action="authorizeWechatPhone">允许</button></div>`;
+    body=`<div class="wechat-permission-app"><img src="assets/mianbao-lamb.webp" alt="眠宝"><strong>${APP_NAME}</strong><span>申请</span></div><h3 class="wechat-permission-title">获取你的手机号</h3><p class="wechat-permission-purpose">用于识别你的账号并完成登录</p><div class="wechat-phone-number"><strong>138 **** 0000</strong><span>微信绑定手机号</span><i aria-hidden="true">✓</i></div><div class="wechat-permission-actions"><button data-action="denyWechatPhone">拒绝</button><button data-action="authorizeWechatPhone">允许</button></div>`;
   }else if(sheet==='archiveGuide'){
     title='建立您的健康档案';
-    body=`<div class="archive-guide-mascot"><img src="assets/mianbao-lamb.webp" alt="邀请您建档的眠宝"></div><h3 class="task-guide-title">先建立一份健康档案吧</h3><p class="task-guide-copy">告诉眠宝您的确诊时间和当前用药，<br>方便日后记录与回顾。</p><button class="btn full" data-action="beginPatientArchive">建立档案</button><button class="btn ghost full" data-action="deferArchive">稍后再说</button>`;
+    body=`<div class="archive-guide-mascot"><img src="assets/mianbao-lamb.webp" alt="邀请您建档的眠宝"></div><h3 class="task-guide-title">让眠宝先认识您</h3><p class="task-guide-copy">先告诉我您的确诊时间和当前用药，<br>我会帮您收好这份健康档案。</p><button class="btn full" data-action="beginPatientArchive">建立档案</button><button class="btn ghost full" data-action="deferArchive">稍后再说</button>`;
   }else if(sheet==='location'){
     title='附近药店';
     body=pharmacyLocation?`<p class="sheet-note">已获取当前位置。下方为开放地图中的附近药店，具体营业与药品库存请向药店核实。</p>${pharmacyLoading?'<div class="empty">正在查找附近药店…</div>':pharmacyError?`<div class="empty">${esc(pharmacyError)}</div>`:pharmacyStores.length?pharmacyStores.map((place,i)=>`<div class="pharmacy-place"><span class="pharmacy-place__number">${i+1}</span><div><strong>${esc(place.name)}</strong><small>${esc(place.address||'地址暂无')} · 约 ${place.distance.toFixed(1)} 公里</small></div></div>`).join(''):'<div class="empty">3 公里内暂无可展示的开放地图药店信息</div>'}<button class="btn secondary full" data-action="locate">重新定位</button>`:`<div class="location-consent"><span>⌖</span><h3>获取您的当前位置</h3><p>授权后显示当前位置地图，并查询 3 公里内的药店。位置会发送给 OpenStreetMap 地图及 Overpass 查询服务；不会在本地保存坐标。</p>${pharmacyError?`<div class="notice warn">${esc(pharmacyError)}</div>`:''}<button class="btn full" data-action="locate">${pharmacyLoading?'正在请求定位…':'授权位置并查找'}</button></div>`;
@@ -318,7 +344,7 @@ function home(){
     'claimed-recorded':'今天的用药已记录'
   }[status];
   return `<div class="page page--home">
-    <header class="page-head page-head--home"><h1>您好！今天感觉怎么样？</h1></header>
+    <header class="page-head page-head--home"><h1>${APP_NAME}</h1><p class="sub">您好，我是眠宝，今天感觉怎么样？</p></header>
     <section class="home-checkin" aria-label="晨起状态与眠宝反馈">
       <div class="moods">${moodOptions.map(([emoji,label])=>`<button class="mood ${m===label?'selected':''}" data-mood="${label}" aria-pressed="${m===label}" ${m?'disabled':''}><span aria-hidden="true">${emoji}</span>${label}</button>`).join('')}</div>
       <div class="home-checkin__story home-checkin__story--benefit">
@@ -340,12 +366,12 @@ function special(){
     ${scaleCardsMarkup()}
   </div>`;
 }
-function ai(){return `<iframe id="mianbaoServiceFrame" class="mianbao-service-frame" title="眠宝帮您患者服务" src="mianbao-service/index.html?v=local-records-20261014" allow="microphone"></iframe>`}
+function ai(){return `<iframe id="mianbaoServiceFrame" class="mianbao-service-frame" title="发作性睡病之家 · 眠宝帮您" src="mianbao-service/index.html?v=assistant-education-20261019" allow="microphone"></iframe>`}
 function paymentSummary(){const source=state.insuranceStatus||'unclaimed';const key=['unclaimed','reviewing'].includes(source)?source:['applied','claimed','rejected'].includes(source)?'applied':'unclaimed';const states={unclaimed:{label:'未申请',copy:'了解创新支付服务，查看申请流程。',action:'了解申请流程'},reviewing:{label:'审核中',copy:'申请正在审核，查看当前办理进度。',action:'查看申请进度'},applied:{label:'已申请',copy:'查看您的申请信息与服务办理情况。',action:'查看申请详情'}};return {key,...states[key]}}
 function rights(){return knowledgeCenter()}
 
 function patientUserId(){if(!state.userId){state.userId='MB'+uid().replace(/[^a-zA-Z0-9]/g,'').slice(0,12).toUpperCase();try{store()}catch{toast('用户ID暂未保存，请稍后重试')}}return state.userId}
-function mine(){if(state.authStatus==='closed')return `<div class="page page--mine">${card(`<div class="mine-closed"><img src="assets/mianbao-lamb.webp" alt="眠宝"><h1>账户已注销</h1><p>本地记录已清除。</p><button class="btn full" data-action="restartDemo">重新进入</button></div>`)}</div>`;if(state.authStatus==='signed-out')return `<div class="page page--mine">${card(`<div class="mine-closed"><img src="assets/mianbao-lamb.webp" alt="眠宝"><h1>已退出登录</h1><p>本地记录仍保留。</p><button class="btn full" data-action="demoLogin">重新进入</button></div>`)}</div>`;return `<div class="page page--mine"><header class="page-head"><h1>我的</h1></header><section class="mine-profile"><div><small>你好，${esc(patientUserId())}</small><h2>与眠宝一起记录每一天</h2></div><img src="assets/mianbao-lamb.webp" alt="挥手的眠宝"></section><div class="section-title">我的服务</div>${card(`${compactRow('♙','个人资料','profile')}`)}<div class="section-title">设置</div>${card(`${compactRow('⚙','设置','accountSettings')}`)}</div>`}
+function mine(){if(state.authStatus==='closed')return `<div class="page page--mine">${card(`<div class="mine-closed"><img src="assets/mianbao-lamb.webp" alt="眠宝"><h1>账户已注销</h1><p>本地记录已清除。</p><button class="btn full" data-action="restartDemo">重新进入</button></div>`)}</div>`;if(state.authStatus==='signed-out')return `<div class="page page--mine">${card(`<div class="mine-closed"><img src="assets/mianbao-lamb.webp" alt="眠宝"><h1>已退出登录</h1><p>本地记录仍保留。</p><button class="btn full" data-action="demoLogin">重新进入</button></div>`)}</div>`;return `<div class="page page--mine"><header class="page-head"><h1>我的</h1></header><section class="mine-profile"><div><small>你好，${esc(patientUserId())}</small><h2>眠宝陪您，记录每一天</h2></div><img src="assets/mianbao-lamb.webp" alt="挥手的眠宝"></section><div class="section-title">我的服务</div>${card(`${compactRow('♙','个人资料','profile')}`)}<div class="section-title">设置</div>${card(`${compactRow('⚙','设置','accountSettings')}`)}</div>`}
 function med(){const list=state.meds.slice().reverse();return `<div class="page page--detail">${header('服药打卡','仅用于记录，不提供漏服补服医学建议')}${card(`<div class="metric"><div><small>计划时间</small><br><strong>${esc(state.settings.medTime)}</strong></div><span class="pill">${hasToday(state.meds)?'今日已记录':'今日待记录'}</span></div><div class="button-row" style="margin-top:16px"><button class="btn" data-action="medNow">记录已按医嘱服药</button><button class="btn secondary" data-go="medReminder">修改提醒</button></div><p class="help">若错过计划时间或对用药有疑问，请按照处方和经审核的药品资料咨询医生或药师。</p>`)}${card(`<strong>最近记录</strong>${list.length?list.slice(0,8).map(x=>`<div class="item"><strong>${esc(x.day)}</strong><small>${nice(x.time)} · ${esc(x.note||'按时记录')}</small></div>`).join(''):`<div class="empty">还没有服药记录</div>`}`)}</div>`}
 function medReminder(){return `<div class="page page--detail">${header('用药提醒')}${card(`<div class="reminder-intro"><span>⏰</span><div><strong>按计划用药</strong><small>设置提醒时间，方便每天查看用药任务</small></div></div>`)}<form data-form="medReminder">${card(`<div class="form-field"><label for="reminderTime">每日提醒时间</label><input id="reminderTime" name="medTime" type="time" value="${esc(state.settings.medTime)}" required></div><div class="setting-toggle"><div><strong>消息通知提醒</strong></div><label class="switch"><input name="notificationEnabled" type="checkbox" ${state.settings.notificationEnabled?'checked':''} aria-label="消息通知提醒"><span></span></label></div>`)}<button class="btn full" type="submit">保存提醒</button></form></div>`}
 function nap(){const num=state.naps.filter(x=>x.day===today()).length;return `<div class="page page--detail">${header('小憩时钟','按自己的计划安排休息')}${card(`<div class="metric"><div><small>今日已记录</small><br><strong>${num} 次</strong></div><span class="pill">计划 ${state.settings.napMinutes} 分钟</span></div><div class="count" id="napClock" style="text-align:center;margin:24px 0">${formatClock(napStarted?napRemaining:state.settings.napMinutes*60)}</div><div class="button-row"><button class="btn" data-action="napStart" ${napTimer?'disabled':''}>${napTimer?'计时中':napStarted?'继续计时':'开始计时'}</button><button class="btn secondary" data-action="napPause">暂停</button><button class="btn ghost" data-action="napFinish">结束并记录</button></div>`)}${card(`<strong>小憩记录</strong>${state.naps.length?state.naps.slice().reverse().slice(0,8).map(x=>`<div class="item"><strong>${esc(x.minutes)} 分钟</strong><small>${nice(x.time)}</small></div>`).join(''):`<div class="empty">尚无记录，点击“开始计时”体验</div>`}`)}</div>`}
@@ -388,7 +414,7 @@ else if(type==='scalePhoto'){const file=v.photo;if(!(file instanceof File)||!fil
 else if(type==='sleep'){const bed=new Date(v.bed),wake=new Date(v.wake);if(Number.isNaN(+bed)||Number.isNaN(+wake)||wake<=bed)return toast('起床时间需晚于就寝时间');state.sleep.push({id:uid(),bed:bed.toISOString(),wake:wake.toISOString(),day:wake.toLocaleDateString('sv-SE'),quality:v.quality,note:v.note});store();toast('睡眠日志已保存');go('sleepList')}
 else if(type==='appointment'){state.appointments.push({id:uid(),name:v.name,date:v.date,note:v.note,time:dt()});store();toast('预约意向已保存在本地');render()}
 else if(type==='settings'){state.settings={...state.settings,medTime:v.medTime,napMinutes:Number(v.napMinutes)};store();toast('设置已保存');back()}
-else if(type==='medReminder'){state.settings={...state.settings,medTime:v.medTime,notificationEnabled:fd.has('notificationEnabled')};store();toast('用药提醒已保存');back()}
+else if(type==='medReminder'){state.settings={...state.settings,medTime:v.medTime,notificationEnabled:fd.has('notificationEnabled')};store();toast('用药提醒已保存');if(assistantMedicationEmbed)window.parent.postMessage({type:'mianbao-medication-saved'},location.origin);back()}
 else if(type==='chat'){const q=String(v.question||'').trim();if(!q)return;stopVoice();const a=/不良反应|副作用|猝倒/.test(q)?'我无法判断具体症状。你可以先保存发生时间和表现，再联系医生或药师。':'已收到你的问题。具体用药建议请咨询医生或药师。';state.chat.push({topic:route.topic||'faq',q,a});store();composeDraft='';render();app.scrollTop=app.scrollHeight}}
 function action(name){switch(name){case'back':back();break;
 case'readTerms':loginInProgress=false;showLoginProtocol('terms');break;
@@ -502,12 +528,12 @@ const protocolVersion='preview-20261013';
 let loginInProgress=false, archiveFormDraft=null;
 const protocolConfirmed=key=>state.protocolConsents?.[key]?.version===protocolVersion&&!!state.protocolConsents[key].confirmedAt;
 function hasPatientArchive(){return !!(state.patientArchive?.diagnosisDate&&state.patientArchive?.currentDrugs)}
-function login(){return `<div class="page page--login"><div class="login-welcome"><div class="login-brand">眠宝<span>NT1阵发性睡眠服务平台</span></div><img class="login-mascot" src="assets/mianbao-lamb.webp" alt="向您挥手的眠宝"><h1>眠宝陪您，安睡每一天</h1></div><div class="login-actions"><button class="wechat-login" data-action="requestWechatLogin">立即登录</button><div class="login-protocols"><button data-action="readTerms" aria-label="查看用户协议">《用户协议》</button><button data-action="readPrivacy" aria-label="查看隐私政策">《隐私政策》</button></div></div></div>`}
+function login(){return `<div class="page page--login"><div class="login-welcome"><div class="login-brand">${APP_NAME}<span>眠宝陪伴，记录每一天</span></div><img class="login-mascot" src="assets/mianbao-lamb.webp" alt="向您挥手的眠宝"><h1>您好，我是眠宝</h1><p class="login-guide">从了解自己开始，<br>让我陪您把每一天记清楚。</p></div><div class="login-actions"><button class="wechat-login" data-action="requestWechatLogin">立即登录</button><div class="login-protocols"><button data-action="readTerms" aria-label="查看用户协议">《用户协议》</button><button data-action="readPrivacy" aria-label="查看隐私政策">《隐私政策》</button></div></div></div>`}
 const archiveDrugOptions=[{code:'pitolisant',label:'盐酸替洛利生'},{code:'modafinil',label:'莫达非尼'},{code:'methylphenidate',label:'哌甲酯'},{code:'other',label:'其他药物'},{code:'none',label:'暂无用药'}];
 function archiveDrugSelection(value){if(Array.isArray(value.selectedDrugCodes))return {selectedDrugCodes:[...new Set(value.selectedDrugCodes.filter(code=>archiveDrugOptions.some(x=>x.code===code)))],otherDrugs:String(value.otherDrugs||'')};const raw=String(value.currentDrugs||'').trim();if(!raw)return {selectedDrugCodes:[],otherDrugs:''};if(raw==='暂无用药')return {selectedDrugCodes:['none'],otherDrugs:''};const parts=raw.split(/[、,，;；\n]+/).map(x=>x.trim()).filter(Boolean),selected=[],others=[];for(const part of parts){const option=archiveDrugOptions.find(x=>!['other','none'].includes(x.code)&&x.label===part);if(option)selected.push(option.code);else others.push(part)}if(others.length)selected.push('other');return {selectedDrugCodes:[...new Set(selected)],otherDrugs:others.length?(selected.length===1?raw:others.join('、')):''}}
 function archiveFormValue(form){return {diagnosisDate:form.elements.diagnosisDate.value,selectedDrugCodes:[...form.querySelectorAll('[data-archive-drug]:checked')].map(input=>input.value),otherDrugs:form.elements.otherDrugs.value}}
 function updateArchiveDrugSelection(input){const form=input.closest('form'),choices=[...form.querySelectorAll('[data-archive-drug]')];if(input.checked){if(input.value==='none')choices.forEach(item=>{if(item!==input)item.checked=false});else choices.find(item=>item.value==='none').checked=false}const other=choices.some(item=>item.value==='other'&&item.checked);form.querySelector('#archiveOtherDrugsField').hidden=!other;form.elements.otherDrugs.required=other;archiveFormDraft=archiveFormValue(form)}
-function patientArchive(){const value=archiveFormDraft||state.patientArchive||{},selection=archiveDrugSelection(value),other=selection.selectedDrugCodes.includes('other');return `<div class="page page--detail page--archive">${header(hasPatientArchive()?'健康档案':'建立健康档案')}<div class="archive-intro"><img src="assets/mianbao-lamb.webp" alt="陪您建档的眠宝"><div><strong>眠宝帮您收好健康信息</strong><p>填写确诊时间与当前用药，方便日后回顾。</p></div></div><form data-form="patientArchive">${card(`<div class="form-field"><label for="archiveDiagnosisDate">NT1阵发性睡病确诊时间</label><input id="archiveDiagnosisDate" name="diagnosisDate" type="date" max="${today()}" value="${esc(value.diagnosisDate||'')}" required></div><fieldset class="archive-drug-field"><legend>当前使用药物 <span>可多选</span></legend><div class="archive-drug-options">${archiveDrugOptions.map(item=>`<label class="archive-drug-card ${item.code==='none'?'archive-drug-card--none':''}"><input data-archive-drug type="checkbox" name="selectedDrugCodes" value="${item.code}" ${selection.selectedDrugCodes.includes(item.code)?'checked':''}><span>${esc(item.label)}</span><i aria-hidden="true">✓</i></label>`).join('')}</div></fieldset><div id="archiveOtherDrugsField" class="form-field" ${other?'':'hidden'}><label for="archiveOtherDrugs">其他药物名称</label><textarea id="archiveOtherDrugs" name="otherDrugs" rows="2" maxlength="500" placeholder="填写当前使用的其他药物名称" ${other?'required':''}>${esc(selection.otherDrugs)}</textarea></div>`)}<button type="submit" class="btn full">${hasPatientArchive()?'保存档案':'保存并完成建档'}</button></form></div>`}
+function patientArchive(){const value=archiveFormDraft||state.patientArchive||{},selection=archiveDrugSelection(value),other=selection.selectedDrugCodes.includes('other');return `<div class="page page--detail page--archive">${header(hasPatientArchive()?'健康档案':'建立健康档案')}<div class="archive-intro"><img src="assets/mianbao-lamb.webp" alt="陪您建档的眠宝"><div><strong>先让眠宝了解您</strong><p>填写确诊时间，选择当前使用的药物，<br>我会陪您一起记录与回顾。</p></div></div><form data-form="patientArchive">${card(`<div class="form-field"><label for="archiveDiagnosisDate">NT1阵发性睡病确诊时间</label><input id="archiveDiagnosisDate" name="diagnosisDate" type="date" max="${today()}" value="${esc(value.diagnosisDate||'')}" required></div><fieldset class="archive-drug-field"><legend>当前使用药物 <span>可多选</span></legend><div class="archive-drug-options">${archiveDrugOptions.map(item=>`<label class="archive-drug-card ${item.code==='none'?'archive-drug-card--none':''}"><input data-archive-drug type="checkbox" name="selectedDrugCodes" value="${item.code}" ${selection.selectedDrugCodes.includes(item.code)?'checked':''}><span>${esc(item.label)}</span><i aria-hidden="true">✓</i></label>`).join('')}</div></fieldset><div id="archiveOtherDrugsField" class="form-field" ${other?'':'hidden'}><label for="archiveOtherDrugs">其他药物名称</label><textarea id="archiveOtherDrugs" name="otherDrugs" rows="2" maxlength="500" placeholder="填写当前使用的其他药物名称" ${other?'required':''}>${esc(selection.otherDrugs)}</textarea></div>`)}<button type="submit" class="btn full">${hasPatientArchive()?'保存档案':'保存并完成建档'}</button></form></div>`}
 
 function showLoginProtocol(key){if(route.name!=='login')return;sheet=key==='terms'?'loginTerms':'loginPrivacy';renderSheet()}
 function advanceLogin(){if(route.name!=='login')return;loginInProgress=true;sheet='wechatPhone';renderSheet()}
@@ -520,6 +546,35 @@ document.addEventListener('input',e=>{const form=e.target.closest('[data-form="p
 document.addEventListener('change',e=>{if(e.target.matches('[data-archive-drug]'))updateArchiveDrugSelection(e.target)});
 
 
+// Scoped bridge used only by the assistant's native record sheet.
+function syncAssistantJourneyState(){let saved;try{saved=JSON.parse(localStorage.getItem('mianbao-prototype-v1'))}catch{return}if(!saved)return;if(Array.isArray(saved.journeyRecords))state.journeyRecords=saved.journeyRecords;if(saved.journeyDrafts&&typeof saved.journeyDrafts==='object')state.journeyDrafts=saved.journeyDrafts;state.journeyDraft=saved.journeyDraft||null;if(saved.settings&&typeof saved.settings==='object')state.settings={...state.settings,...saved.settings};}
+window.addEventListener('storage',event=>{if(event.key==='mianbao-prototype-v1')syncAssistantJourneyState()});
+window.mianbaoJourneyHost={saveVoiceRecord(payload){
+ if(state.authStatus!=='active')return {ok:false,error:'请先登录后记录'};
+ const id=String(payload?.id||''),text=String(payload?.text||'').trim(),at=String(payload?.at||'');if(!/^assistant-voice-[a-zA-Z0-9-]+$/.test(id)||!text||text.length>2000||!Number.isFinite(Date.parse(at)))return {ok:false,error:'语音信息不完整，请重试'};
+ syncAssistantJourneyState();const existing=state.journeyRecords.find(record=>record.id===id);if(existing)return {ok:true,record:journeyClone(existing),existing:true};
+ const record=emptyJourneyRecord();Object.assign(record,{id,inputMode:'voice',createdAt:at,updatedAt:at,referenceAt:at,originalText:text,originalTranscript:text,extractedAt:at,source:'mianbao-chat-voice',voiceSegments:[{id,durationMs:8000,text,referenceAt:at}]});record.facts=journeyVoiceFacts(text,at);record.description=journeyDefaultDescription(record)||text;record.optimizedText=journeySummaryText(record);record.userEditedFields=[];
+ const previous=state.journeyRecords;state.journeyRecords=[...previous,record];try{store()}catch{state.journeyRecords=previous;return {ok:false,error:'病程保存失败，请重试'}}return {ok:true,record:journeyClone(record)};
+},async saveImageRecord(payload){
+ if(state.authStatus!=='active')return {ok:false,error:'请先登录后记录'};
+ const id=String(payload?.id||''),at=String(payload?.at||''),dataUrl=String(payload?.dataUrl||'');if(!/^assistant-image-[a-zA-Z0-9-]+$/.test(id)||!Number.isFinite(Date.parse(at))||!/^data:image\/(jpeg|png|webp);base64,/.test(dataUrl)||dataUrl.length>14*1024*1024)return {ok:false,error:'图片信息不完整，请重新发送'};
+ syncAssistantJourneyState();let existing=state.journeyRecords.find(r=>r.id===id);if(existing)return {ok:true,record:journeyClone(existing),existing:true};
+ const record=emptyJourneyRecord();Object.assign(record,{id,inputMode:'image',createdAt:at,updatedAt:at,referenceAt:at,source:'mianbao-chat-image',images:[{id:'image-'+id,name:'聊天图片.jpg',source:'assistant',dataUrl}]});
+ let result;try{result=await journeyProvider().extract({kind:'image',text:'',images:record.images,referenceAt:at,signal:new AbortController().signal})}catch{return {ok:false,error:'图片整理失败，请重试'}}
+ for(const key of Object.keys(record.facts))if(result?.facts?.[key]!=null)record.facts[key]=String(result.facts[key]);for(const [key,value] of Object.entries(result?.visitInfo||{}))if(journeyVisitFields.some(f=>f[0]===key))record.visitInfo[key]=String(value||'');
+ record.extractedAt=dt();record.description=journeyDefaultDescription(record)||'图片病程资料，待核对补充';record.optimizedText=journeySummaryText(record);record.userEditedFields=[];
+ syncAssistantJourneyState();existing=state.journeyRecords.find(r=>r.id===id);if(existing)return {ok:true,record:journeyClone(existing),existing:true};const previous=state.journeyRecords;state.journeyRecords=[...previous,record];try{store()}catch{state.journeyRecords=previous;return {ok:false,error:'图片病程保存失败，请重试'}}return {ok:true,record:journeyClone(record)};
+}};
+window.prepareAssistantJourneyClose=()=>{if(!assistantJourneyEmbed)return true;abortJourneyOperation();persistJourneyDraft();return !journeyUi.draftFailed;};
+if(assistantJourneyEmbed)window.addEventListener('pagehide',()=>{abortJourneyOperation();persistJourneyDraft()});
+
 render();
 if(state.authStatus==='active')runNapTicker();
 migrateLegacyDescriptions();
+
+// Only the assistant's innovation payment secondary page hides the host tab bar.
+window.addEventListener('message',event=>{
+ const frame=document.getElementById('mianbaoServiceFrame');
+ if(route.name!=='ai'||event.origin!==location.origin||event.source!==frame?.contentWindow||event.data?.type!=='mianbao-payment-page-state')return;
+ document.querySelector('.device').classList.toggle('device--no-tabs',event.data.open===true);
+});

@@ -44,6 +44,7 @@
   function initialState(){return {enrollment:'approved',type:'direct',code:'20',patient:{name:'林晓宁',age:32,gender:'女'},orders:seedOrders(),sessions:seedSessions(),reports:[]};}
   let state = initialState();
   try {const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));if(saved && Array.isArray(saved.orders) && Array.isArray(saved.sessions)) state={...state,...saved};} catch {}
+  for(const session of state.sessions)for(const message of session.messages||[])if(message.kind==='demoMediaIntent'&&message.status==='saving')message.status='pending';
   // A rolling twelve-month window; no actual patient records are stored.
   const cutoff=now();cutoff.setMonth(cutoff.getMonth()-12);
   state.sessions=state.sessions.filter(s=>new Date(s.updated)>=cutoff);
@@ -59,12 +60,12 @@
   const enrollmentMap={
     unsubmitted:{tag:'未入组',tone:'blue',desc:'申请入组即可了解项目福利',action:'立即申请',explain:'点击进度卡进入入组申请页面。'},
     supplement:{tag:'待投保',tone:'warning',desc:'补充材料，继续领取保险权益',action:'补充材料',explain:'点击进度卡进入资料补充页面。'},
-    enrollReview:{tag:'审核中',tone:'warning',desc:'已收到您的资料，正在加急审核中',action:'查看进度',explain:'点击进度卡展示审核中提示，不跳转。'},
+    enrollReview:{tag:'审核中',tone:'warning',desc:'已收到您的资料，正在加急审核中',action:'查看进度',explain:'点击进度卡进入入组审核进度页。'},
     enrollRejected:{tag:'未通过',tone:'danger',desc:'您的资料有误，请重新提交审核',action:'修改资料',explain:'点击进度卡进入修改资料页面。'},
-    noApplication:{tag:'待申请',tone:'blue',desc:'您已投保成功，快来领取福利吧',action:'查看详情',explain:'打开无申请记录弹窗，可发起福利申请。'},
-    orderRejected:{tag:'未通过',tone:'danger',desc:'您的本次申请被拒，请重新提交',action:'查看详情',explain:'打开被拒订单，可查看原因并重新上传。'},
-    orderReview:{tag:'审核中',tone:'warning',desc:'已收到您的申请，请留意平台消息',action:'查看详情',explain:'打开审核中订单，底部申请按钮置灰。'},
-    approved:{tag:'已通过',tone:'',desc:'您的申请已通过，快去使用吧',action:'查看详情',explain:'打开已通过订单，展示对应流程节点。'},
+    noApplication:{tag:'待申请',tone:'blue',desc:'您已投保成功，快来领取福利吧',action:'查看详情',explain:'打开无申请记录页面，可发起福利申请。'},
+    orderRejected:{tag:'未通过',tone:'danger',desc:'您的本次申请被拒，请重新提交',action:'查看详情',explain:'进入被拒订单页面，可查看原因并重新上传。'},
+    orderReview:{tag:'审核中',tone:'warning',desc:'已收到您的申请，请留意平台消息',action:'查看详情',explain:'进入审核中订单页面，底部申请按钮置灰。'},
+    approved:{tag:'已通过',tone:'',desc:'您的申请已通过，快去使用吧',action:'查看详情',explain:'进入已通过订单页面，展示对应流程节点。'},
   };
   function mappedOrder(o){
     if(!o) return {label:'待申请',tone:'blue',phase:0};
@@ -85,24 +86,141 @@
   const visibleOrders=()=>patientEnrolled()&&state.enrollment!=='noApplication'?state.orders.filter(o=>!['00','21'].includes(o.code)):[];
   function tag(text,tone=''){return `<span class="status-tag ${tone}">${esc(text)}</span>`;}
   function showToast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,2800);}
-  function renderPayment(){
+  function assistantPaymentMeta(){
     const meta={...enrollmentMap[state.enrollment]};
     if(state.enrollment==='approved') {
       meta.desc=state.type==='direct'?'您的申请已通过，快去使用吧':'您的申请已通过，请静待打款';
       if(['30','40','55','60','80','85','90','91','95','92','93','94'].includes(state.code) && mappedOrder(latest()).label==='已完成')meta.tag='已完成';
     }
+    return meta;
+  }
+  function renderPayment(){
+    const meta=assistantPaymentMeta();
     $('#paymentFloat').innerHTML=`创新支付 <span class="action-status">${esc(meta.tag)}</span>`;
     $('#paymentFloat').setAttribute('aria-label',`创新支付，${meta.tag}`);
     $('#conversationActions').hidden=view!=='chat'||!(state.sessions.find(s=>s.id===activeSession)?.messages.length);
   }
-  function feature(name,desc,kind,color,action){return `<button class="feature" data-action="${action}"><span class="feature-icon ${color}">${icon(kind)}</span><strong>${name}</strong><small>${desc}</small></button>`;}
+  function feature(name,desc,kind,color,action,status=''){return `<button class="feature" data-action="${action}">${status?`<span class="assistant-feature-status">${esc(status)}</span>`:''}<span class="feature-icon ${color}">${icon(kind)}</span><strong>${name}</strong><small>${desc}</small></button>`;}
   function homeMarkup(){
-    return `${care?.dailyMarkup()||''}<div class="feature-grid">${feature('创新支付','特药自付减免','card','','payment')}${feature('病历夹','文字语音图片','doc','green','records')}${feature('健康科普','阅读健康知识','layers','purple','education')}${feature('联系客服','一对一咨询','support','pink','call')}</div><h4 class="section-label">${icon('star')} 猜你想问</h4><button class="question-card" data-question="${DISEASE}有哪些表现？"><strong>${DISEASE}有哪些表现？</strong><small>热门咨询 · 疾病相关</small></button><button class="question-card" data-question="${DISEASE}用药有哪些注意事项？"><strong>${DISEASE}用药有哪些注意事项？</strong><small>热门咨询 · 用药相关</small></button><button class="question-card" data-question="如何申请创新支付福利？"><strong>如何申请创新支付福利？</strong><small>热门咨询 · 创新支付相关</small></button>`;
+    return `${care?.dailyMarkup()||''}<div class="feature-grid">${feature('创新支付','特药自付减免','card','','payment',assistantPaymentMeta().tag)}${feature('记录病程','图片语音记录','doc','green','recordJourney')}${feature('健康科普','阅读健康知识','layers','purple','education')}${feature('联系客服','一对一咨询','support','pink','call')}</div><h4 class="section-label">${icon('star')} 猜你想问</h4><button class="question-card" data-question="${DISEASE}有哪些表现？"><strong>${DISEASE}有哪些表现？</strong><small>热门咨询 · 疾病相关</small></button><button class="question-card" data-question="${DISEASE}用药有哪些注意事项？"><strong>${DISEASE}用药有哪些注意事项？</strong><small>热门咨询 · 用药相关</small></button><button class="question-card" data-question="如何申请创新支付福利？"><strong>如何申请创新支付福利？</strong><small>热门咨询 · 创新支付相关</small></button>`;
   }
+  let assistantWorkflowMode='',assistantMediaBusy=false,assistantMediaRevision=0;
+  const voiceExample='昨天晚上看电视的时候，因为大笑，突然双腿发软、站不稳，大概出现了三次，每次过一小会儿就好了。';
+  const mediaId=()=>crypto.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2);
+  function findMediaPrompt(id){for(const s of state.sessions){const m=s.messages.find(m=>m.id===id&&m.kind==='demoMediaIntent');if(m)return {s,m}}return {};}
+  function imageIntentMarkup(m){
+    const busy=assistantMediaBusy||m.status==='saving';
+    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble assistant-intent-card assistant-image-choice-card"><p class="assistant-image-question">我已经收到了您的图片，需要我帮你做些什么么</p>${m.error?`<p class="assistant-intent-error" role="alert">${esc(m.error)}</p>`:''}${m.imageRecorded?`<p class="assistant-intent-result">图片已记录到病程</p><button class="secondary-button" type="button" data-native-journey="${esc(m.imageRecordId)}">查看这条病程</button>`:''}${busy?'<p class="assistant-image-progress" role="status">眠宝正在整理并保存图片，请稍等…</p>':''}<div class="assistant-image-choices"><button type="button" class="primary-button" data-chat-image-choice="record-and-benefit" data-chat-media-id="${esc(m.id)}" ${busy?'disabled':''}>记录病程并且发起新的患者福利申请</button><button type="button" class="secondary-button" data-chat-image-choice="record-only" data-chat-media-id="${esc(m.id)}" ${busy||m.imageRecorded?'disabled':''}>仅记录病程</button><button type="button" class="secondary-button" data-chat-image-choice="claim-only" data-chat-media-id="${esc(m.id)}" ${busy?'disabled':''}>仅申请理赔</button></div>${m.imageApplicationStatus==='opened'?`<small class="assistant-intent-note">已打开${m.imageApplicationKind==='claim'?'理赔':'患者福利'}申请页，提交前请核对材料。</small>`:''}</div></div>`;
+  }
+  async function demoImageJpeg(source){
+    return await new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{try{const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;canvas.getContext('2d').drawImage(image,0,0);resolve(canvas.toDataURL('image/jpeg',.82))}catch{reject(new Error('图片整理失败，请重试'))}};image.onerror=()=>reject(new Error('图片读取失败，请重新发送'));image.src=source});
+  }
+  function openImageApplication(m,source,kind){
+    const block=aidBlock(false);if(block){m.error=(m.imageRecorded?'病程已记录；':'')+block;save();render();return false;}
+    care.beforeNavigate();closeModal();pendingDraft=draftFor('apply');pendingDraft.rx=source.src;pendingDraft.entryFromImage=kind;if(kind==='claim')pendingDraft.type='reimburse';
+    const oldStatus=m.status;m.status='opened';m.imageApplicationStatus='opened';m.imageApplicationKind=kind;m.error='';
+    if(!save()){m.status=oldStatus;m.imageApplicationStatus='';m.error='申请页状态暂未保存，请重试';render();return false;}
+    assistantWorkflowMode='payment';render();renderApplicationForm();return true;
+  }
+  async function chooseImageAction(id,choice){
+    if(!['record-and-benefit','record-only','claim-only'].includes(choice)||assistantMediaBusy)return;
+    const {s,m}=findMediaPrompt(id);if(!m||m.intent!=='payment'||m.status==='saving')return;const source=s.messages.find(v=>v.id===m.sourceMessageId);if(!source)return showToast('图片消息未找到，请重新发送');
+    if(choice==='claim-only'){openImageApplication(m,source,'claim');return;}
+    if(choice==='record-only'&&m.imageRecorded)return;
+    assistantMediaBusy=true;m.status='saving';m.error='';m.imageRecordId||='assistant-image-'+source.id;render();
+    try{
+      if(!m.imageRecorded){
+        const dataUrl=await demoImageJpeg(source.src),host=window.parent!==window?window.parent.mianbaoJourneyHost:null;let record;
+        if(host?.saveImageRecord){const result=await host.saveImageRecord({id:m.imageRecordId,dataUrl,at:source.at});if(!result.ok)throw new Error(result.error);record=result.record;m.imageNativeSaved=true;}
+        else record={id:m.imageRecordId,inputMode:'image',createdAt:source.at,updatedAt:source.at,description:'图片病程资料，待核对补充',facts:{date:new Date(source.at).toLocaleDateString('sv-SE')},images:[{id:source.id,name:'聊天图片.jpg',dataUrl}],originalText:''};
+        await care.saveNativeJourneyRecord(record);m.imageRecorded=true;
+      }
+      m.status='saved';if(!save())throw new Error('病程已保存，会话状态暂未保存，请重试');render();
+      if(choice==='record-and-benefit')openImageApplication(m,source,'benefit');else showToast('图片已记录到病程');
+    }catch(error){m.status='pending';m.error=m.imageNativeSaved&&!m.imageRecorded?'病程已保存，病历夹同步失败，请重试。':error.message||'图片记录失败，请重试';save();render();}
+    finally{assistantMediaBusy=false;render();}
+  }
+  function openNativeMedication(){
+    care.beforeNavigate();closeModal();const params=new URLSearchParams({assistantMedication:'1',v:'assistant-education-20261019'});
+    renderAssistantWorkflow('用药记录',`<iframe id="assistantJourneyFrame" title="用药记录" src="../index.html?${params.toString()}"></iframe>`,'','medication');
+  }
+
+  function mediaMessageMarkup(m){
+    if(m.kind==='demoChatImage')return `<div class="message user"><div class="bubble assistant-image-bubble"><img src="${esc(m.src)}" alt="发送的示例处方图片"><small>图片已发送</small></div></div>`;
+    if(m.kind==='demoChatVoice')return `<div class="message user"><div class="bubble assistant-voice-bubble"><button type="button" data-chat-voice-play="${esc(m.id)}" aria-label="播放语音示例"><span class="assistant-audio-waves" aria-hidden="true">▂ ▅ ▇ ▅ ▂</span><strong>8″</strong></button><p>语音文字：${esc(m.text)}</p></div></div>`;
+    if(m.kind==='nativeJourneySaved')return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble assistant-intent-card"><strong>病程已收好</strong><p>${esc(m.description||'这次的情况已经记下，之后可以继续查看和修改。')}</p><button type="button" class="secondary-button" data-native-journey="${esc(m.recordId)}">查看这条病程</button></div></div>`;
+    if(m.kind!=='demoMediaIntent')return null;
+    if(m.intent==='payment')return imageIntentMarkup(m);
+    const voice=m.intent==='journey',saved=m.status==='saved',declined=m.status==='declined',saving=m.status==='saving',opened=m.status==='opened';
+    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble assistant-intent-card"><div class="assistant-intent-heading"><span aria-hidden="true">${voice?'✎':'♧'}</span><strong>${'把这段语音记进病程？'}</strong></div><p>${'刚刚的语音我收到了。要帮您把这次的时间和情况记录到病程中吗？'}</p>${m.error?`<p class="assistant-intent-error" role="alert">${esc(m.error)}</p>`:''}${saved?`<p class="assistant-intent-result">已记录到病程</p><button type="button" class="secondary-button" data-native-journey="${esc(m.recordId)}">查看病程</button>`:declined?'<p class="assistant-intent-result">好的，这次暂不处理。</p>':`<div class="assistant-intent-actions"><button type="button" class="primary-button" data-chat-media-confirm="${esc(m.id)}" ${saving?'disabled':''}>${saving?'正在保存…':voice?(m.nativeSaved?'重试同步':'是，记录病程'):(opened?'继续填写申请':'是，发起申请')}</button><button type="button" class="secondary-button" data-chat-media-decline="${esc(m.id)}" ${saving?'disabled':''}>暂不需要</button></div>${opened?'<small class="assistant-intent-note">已打开申请页，尚未提交申请。</small>':''}`}</div></div>`;
+  }
+  function sendDemoChatMedia(kind){
+    if(typing||assistantMediaBusy)return showToast('请等待当前操作完成');
+    care.pauseForChatMedia();const s=ensureSession();view='chat';const id=mediaId(),at=now().toISOString();
+    const message=kind==='voice'?{id,kind:'demoChatVoice',role:'user',text:voiceExample,at}:{id,kind:'demoChatImage',role:'user',src:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('prescription')),at};
+    const prompt={id:'prompt-'+id,kind:'demoMediaIntent',role:'bot',intent:kind==='voice'?'journey':'payment',sourceMessageId:id,recordId:'assistant-voice-'+id,status:'pending',at};
+    const old=s.messages.slice(),updated=s.updated;s.messages.push(message,prompt);s.updated=at;
+    if(!save()){s.messages=old;s.updated=updated;render();return;}render();
+  }
+  function renderAssistantWorkflow(title,body,footer='',mode='payment'){
+    const dialog=$('#assistantWorkflowDialog');assistantWorkflowMode=mode;dialog.dataset.mode=mode;
+    dialog.innerHTML=`<header class="assistant-workflow-header"><h2 id="assistantWorkflowTitle">${esc(title)}</h2><button type="button" data-assistant-workflow-close aria-label="关闭${esc(title)}">×</button></header><div class="assistant-workflow-body sheet-body">${body}</div>${footer?`<footer class="assistant-workflow-footer">${footer}</footer>`:''}`;
+    if(!dialog.open)dialog.showModal();
+  }
+  function closeAssistantWorkflow(){
+    const dialog=$('#assistantWorkflowDialog');if(!dialog?.open)return true;
+    const nested=$('#assistantJourneyFrame');if(nested?.contentWindow?.prepareAssistantJourneyClose&&!nested.contentWindow.prepareAssistantJourneyClose()){showToast('草稿尚未保存成功，请稍后重试');return false;}
+    assistantWorkflowMode='';dialog.close();dialog.innerHTML='';return true;
+  }
+  function openNativeJourney(caseId=''){
+    care.beforeNavigate();closeModal();const params=new URLSearchParams({assistantJourney:'1',v:'assistant-media-20261019'});if(caseId)params.set('caseId',caseId);
+    renderAssistantWorkflow('记录病程',`<iframe id="assistantJourneyFrame" title="病程记录" src="../index.html?${params.toString()}"></iframe>`,'','journey');
+  }
+  async function confirmChatMedia(id){
+    const {s,m}=findMediaPrompt(id);if(!m||['saving','saved','declined'].includes(m.status))return;
+    const source=s.messages.find(v=>v.id===m.sourceMessageId);if(!source)return showToast('原始消息未找到，请重新发送');
+    if(m.intent==='payment'){
+      const block=aidBlock(false);if(block)return showToast(block);
+      care.beforeNavigate();closeModal();pendingDraft=draftFor('apply');pendingDraft.rx=source.src;assistantWorkflowMode='payment';m.status='opened';delete m.error;save();render();renderApplicationForm();return;
+    }
+    m.status='saving';m.error='';assistantMediaBusy=true;render();
+    try{
+      let record;const host=window.parent!==window?window.parent.mianbaoJourneyHost:null;
+      if(host){const result=host.saveVoiceRecord({id:m.recordId,text:source.text,at:source.at});if(!result.ok)throw new Error(result.error);record=result.record;m.nativeSaved=true;}
+      else record={id:m.recordId,inputMode:'voice',originalText:source.text,description:source.text,createdAt:source.at,updatedAt:source.at,facts:{date:new Date(source.at).toLocaleDateString('sv-SE')},images:[]};
+      await care.saveNativeJourneyRecord(record);m.status='saved';m.error='';
+      if(!save())showToast('病程已保存，会话状态暂未保存');else showToast('已把这段语音记录到病程');
+    }catch(error){m.status='pending';m.error=m.nativeSaved?'病程已保存，病历夹同步失败，请重试。':error.message||'保存失败，请重试';save();}
+    finally{assistantMediaBusy=false;render();}
+  }
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('button');if(!button)return;
+    if(button.id==='assistantVoiceButton')sendDemoChatMedia('voice');
+    if(button.id==='assistantImageButton')sendDemoChatMedia('image');
+    if(button.hasAttribute('data-chat-image-choice'))chooseImageAction(button.dataset.chatMediaId,button.dataset.chatImageChoice);
+    if(button.hasAttribute('data-chat-media-confirm'))confirmChatMedia(button.dataset.chatMediaConfirm);
+    if(button.hasAttribute('data-chat-media-decline')){const {m}=findMediaPrompt(button.dataset.chatMediaDecline);if(m&&!['saved','saving','declined'].includes(m.status)){const old=m.status;m.status='declined';if(!save())m.status=old;render();}}
+    if(button.hasAttribute('data-native-journey'))openNativeJourney(button.dataset.nativeJourney);
+    if(button.hasAttribute('data-assistant-workflow-close'))closeAssistantWorkflow();
+    if(button.hasAttribute('data-chat-voice-play')){button.classList.add('playing');button.setAttribute('aria-label','语音示例播放中');setTimeout(()=>{if(button.isConnected){button.classList.remove('playing');button.setAttribute('aria-label','播放语音示例')}},1200);}
+  });
+  $('#assistantWorkflowDialog').addEventListener('cancel',event=>{event.preventDefault();closeAssistantWorkflow()});
+  window.addEventListener('message',async event=>{
+    if(event.origin!==location.origin||event.source!==$('#assistantJourneyFrame')?.contentWindow)return;
+    if(event.data?.type==='mianbao-journey-close')closeAssistantWorkflow();
+    if(event.data?.type==='mianbao-medication-saved')showToast('用药记录设置已保存');
+    if(event.data?.type==='mianbao-journey-saved'){
+      const r=event.data.record;if(!r?.id)return;const revision=assistantMediaRevision;
+      try{await care.saveNativeJourneyRecord(r);if(revision!==assistantMediaRevision)return;const s=ensureSession();view='chat';const existing=s.messages.find(m=>m.kind==='nativeJourneySaved'&&m.recordId===r.id);if(existing)existing.description=r.description;else s.messages.push({id:'saved-'+r.id,kind:'nativeJourneySaved',role:'bot',recordId:r.id,description:r.description||r.originalText});s.updated=now().toISOString();save();render();showToast('病程已保存，可关闭弹窗继续聊天');}
+      catch{showToast('病程已保存，病历夹暂未同步，可稍后重试');}
+    }
+  });
+
   function renderMessage(m){
+    const media=mediaMessageMarkup(m);if(media!==null)return media;
     if(care&&m.kind)return care.message(m);
     if(m.role==='user')return `<div class="message user"><div class="bubble">${esc(m.text)}</div></div>`;
-    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble">${(m.parts||[]).map(p=>`<p>${p.title?`<span class="bubble-title">${esc(p.title)}</span><br>`:''}${esc(p.text)}</p>`).join('')}${(m.actions||[]).filter(a=>a.action!=='ae').map(a=>`<button class="inline-action" data-action="${a.action}">${icon(a.icon||'card')}${esc(a.label)}</button>`).join('')}</div></div>`;
+    return `<div class="message"><span class="bot-dot"><img src="assets/mianbao-doctor.webp" alt="眠宝"></span><div class="bubble">${(m.parts||[]).map(p=>`<p>${p.title?`<span class="bubble-title">${esc(p.title)}</span><br>`:''}${esc(p.text)}</p>`).join('')}${(m.actions||[]).filter(a=>a.action!=='ae').map(a=>`<button class="inline-action" data-action="${a.action}">${icon(a.icon||'card')}${esc(a.label)}</button>`).join('')}${m.suggestedQuestions?.length?questionSuggestionsMarkup(m.suggestedQuestions):''}</div></div>`;
   }
   function renderChat(){
     const startAtTop=openingView||view==='home';
@@ -115,13 +233,13 @@
     const submitted=state.enrollment!=='unsubmitted';
     const ss=[...state.sessions].sort((a,b)=>new Date(b.updated)-new Date(a.updated));
     const orders=visibleOrders().slice().reverse();
-    return `<div class="profile-card"><span class="profile-avatar">${icon('user')}</span><div class="profile-info"><h3>${submitted?esc(mask(state.patient.name)):'待建立患者档案'}</h3><small>${submitted?`${state.patient.gender} · ${state.patient.age}岁`:'完善资料，开启您的专属服务'}</small></div>${submitted?`<span class="profile-tag">${patientEnrolled()?'已入组':state.enrollment==='supplement'?'待补充资料':'待入组'}</span>`:'<button class="inline-action" data-action="enroll">去建档</button>'}</div><section class="service-section"><h3>历史会话 <span class="section-count">近12个月</span></h3>${ss.slice(0,historyLimit).map(s=>{const user=s.messages.filter(m=>m.role==='user').at(-1);const bot=s.messages.filter(m=>m.role==='bot').at(-1);return `<button class="history-card" data-session="${esc(s.id)}"><time>${dateLabel(s.updated)}</time><strong>${esc(user?.text||'新的咨询')}</strong><p>${esc(bot?.parts?.at(-1)?.text||bot?.text||bot?.title||(bot?.kind==='articles'?'眠宝推荐的科普文章':'暂无回复'))}</p></button>`;}).join('')||'<p class="quiet-note">暂无会话记录，向助手提出第一个问题吧</p>'}${ss.length>historyLimit?'<button class="load-more" data-action="loadMore">加载更多会话</button>':'<p class="quiet-note">已显示全部会话</p>'}</section><section class="service-section"><h3>福利关爱记录 <span class="section-count">${orders.length}笔申请</span></h3>${orders.map(o=>`<button class="record-card" data-order="${esc(o.id)}"><div class="record-top"><strong>${o.type==='direct'?'直付福利申请':'后报销福利申请'}</strong>${tag(mappedOrder(o).label,mappedOrder(o).tone)}</div><p>申请时间：${dateLabel(o.date)}</p><p>订单编号：${esc(o.id)}</p><p>申请人：${esc(mask(o.name))}${o.proxy?'（代领）':''}</p></button>`).join('')||'<div class="detail-card"><p class="quiet-note">暂无福利申请记录</p><button class="secondary-button" data-action="payment">查看创新支付计划</button></div>'}</section><section class="service-section"><h3>常见功能</h3><div class="service-functions"><button data-action="call">${icon('phone')}真人客服</button><button data-action="education">${icon('layers')}健康科普</button></div></section>`;
+    return `<div class="profile-card"><span class="profile-avatar">${icon('user')}</span><div class="profile-info"><h3>${submitted?esc(mask(state.patient.name)):'待建立患者档案'}</h3><small>${submitted?`${state.patient.gender} · ${state.patient.age}岁`:'完善资料，开启您的专属服务'}</small></div>${submitted?`<span class="profile-tag">${patientEnrolled()?'已入组':state.enrollment==='supplement'?'待补充资料':'待入组'}</span>`:'<button class="inline-action" data-action="enroll">去建档</button>'}</div><section class="service-section"><h3>历史会话 <span class="section-count">近12个月</span></h3>${ss.slice(0,historyLimit).map(s=>{const user=s.messages.filter(m=>m.role==='user').at(-1);const bot=s.messages.filter(m=>m.role==='bot').at(-1);return `<button class="history-card" data-session="${esc(s.id)}"><time>${dateLabel(s.updated)}</time><strong>${esc(user?.text||(user?.kind==='demoChatImage'?'发送了一张图片':'新的咨询'))}</strong><p>${esc(bot?.parts?.at(-1)?.text||bot?.text||bot?.title||(bot?.kind==='articles'?'眠宝推荐的科普文章':bot?.kind==='demoMediaIntent'?(bot.intent==='journey'?'语音病程记录确认':'创新支付申请确认'):bot?.kind==='nativeJourneySaved'?'病程记录已保存':'暂无回复'))}</p></button>`;}).join('')||'<p class="quiet-note">暂无会话记录，向助手提出第一个问题吧</p>'}${ss.length>historyLimit?'<button class="load-more" data-action="loadMore">加载更多会话</button>':'<p class="quiet-note">已显示全部会话</p>'}</section><section class="service-section"><h3>福利关爱记录 <span class="section-count">${orders.length}笔申请</span></h3>${orders.map(o=>`<button class="record-card" data-order="${esc(o.id)}"><div class="record-top"><strong>${o.type==='direct'?'直付福利申请':'后报销福利申请'}</strong>${tag(mappedOrder(o).label,mappedOrder(o).tone)}</div><p>申请时间：${dateLabel(o.date)}</p><p>订单编号：${esc(o.id)}</p><p>申请人：${esc(mask(o.name))}${o.proxy?'（代领）':''}</p></button>`).join('')||'<div class="detail-card"><p class="quiet-note">暂无福利申请记录</p><button class="secondary-button" data-action="payment">查看创新支付计划</button></div>'}</section><section class="service-section"><h3>常见功能</h3><div class="service-functions"><button data-action="call">${icon('phone')}真人客服</button><button data-action="education">${icon('layers')}健康科普</button></div></section>`;
   }
   function render(){
     $('#device').dataset.view='chat';
     $('#appLogo').hidden=false;
     $('#headerTitle').textContent='眠宝帮您';
-    $('#headerBadge').textContent='已确诊患者通道';
+    $('#headerBadge').textContent='发作性睡病之家';
     $('#chatBottom').hidden=false;
     renderChat();renderPayment();renderPanel();
   }
@@ -164,24 +282,66 @@
     if(drug){intents.push('药品相关');parts.push({title:'用药咨询',text:ae?'用药后如有不适，请联系医生或药师，准确说明出现的情况和实际用药信息。':'已为您匹配“用药注意事项”演示 FAQ。正式版本会依据药企提供的知识库回答适应症、用法用量、漏服与储存等问题；当前不提供具体药品或剂量建议。'});}
     if(disease){intents.push('疾病相关');parts.push({title:`${DISEASE}咨询`,text:'已匹配疾病相关知识库分类。正式版本将展示经过确认的疾病基础知识、症状、检查与日常管理 FAQ。此处用于演示检索和回答流程，不能据此判断诊断或选择治疗方案。'});}
     if(payment){intents.push('创新支付相关');parts.push({title:'创新支付服务',text:/驳回|补充|材料/.test(text)?'演示流程：打开创新支付进度卡，查看材料审核结果及原因；若材料被驳回，可点击“重新上传”，补充资料后再次提交。':'演示流程：申请入组 → 提交资料 → 审核通过 → 申请直付或后报销福利。点击下方入口可查看您当前的状态。具体 eligibility、保障范围和金额以正式项目规则为准。'.replace('eligibility','参与条件')});actions.push({label:'查看创新支付进度',action:'payment'});}
-    if(pharmacy){intents.push('服务咨询');parts.push({title:'服务入口更新',text:'首页原直付药房入口已更新为病历夹，可用文字、语音和图片记录病程。直付申请中的签约药房信息仍保留在订单详情。'});actions.push({label:'打开病历夹',action:'records',icon:'doc'});}
-    if(/客服|热线|人工/.test(text)){parts.push({title:'人工服务',text:'点击下方按钮可以查看客服联系方式。本演示未配置真实 400 号码。'});actions.push({label:'联系客服',action:'call',icon:'phone'});intents.push('服务咨询');}
+    if(pharmacy){intents.push('服务咨询');parts.push({title:'服务入口更新',text:'首页的记录病程入口可用图片和语音记录病程。直付申请中的签约药房信息仍保留在订单详情。'});actions.push({label:'记录病程',action:'recordJourney',icon:'doc'});}
+    if(/客服|热线|人工/.test(text)){parts.push({title:'人工服务',text:'点击下方按钮查看企业微信客服二维码，添加客服后进行咨询。'});actions.push({label:'联系客服',action:'call',icon:'phone'});intents.push('服务咨询');}
     if(!parts.length)return {role:'bot',parts:[{text:`我可以协助您了解${DISEASE}、用药咨询与创新支付相关服务。这个问题暂不在当前知识库范围内，您可以换个相关问题，或联系人工客服。`}],actions:[{label:'联系人工客服',action:'call',icon:'phone'}],intent:'未知意图 · 固定回复'};
     return {role:'bot',parts,actions,intent:[...new Set(intents)].join(' + ')};
+  }
+  function questionSuggestions(text){
+    const groups=/支付|福利|申请|报销|理赔|材料|入组|审核/.test(text)?['如何查看创新支付申请进度？','创新支付申请需要准备哪些材料？','直付与后报销有什么区别？']:/药|服用|漏服/.test(text)?['用药有哪些注意事项？','用药后不适时怎样联系专业客服？','如何查看创新支付申请进度？']:['发作性睡病有哪些表现？','发作性睡病日常管理需要注意什么？','如何申请创新支付福利？'];
+    const pool=[...groups,'创新支付申请需要准备哪些材料？','如何联系企业微信客服？','用药有哪些注意事项？'];
+    return [...new Set(pool)].filter(q=>q!==text).slice(0,3);
+  }
+  function questionSuggestionsMarkup(questions){
+    return `<section class="assistant-followup" aria-label="猜你想问"><h4>${icon('star')}猜你想问</h4>${questions.slice(0,3).map(q=>`<button type="button" data-question="${esc(q)}"><span>${esc(q)}</span><span aria-hidden="true">›</span></button>`).join('')}</section>`;
   }
   function sendQuestion(text){
     text=text.trim();if(!text)return;if(care?.interceptText(text))return;if(typing){showToast('正在匹配上一条问题，请稍候');return;}
     closeModal();view='chat';const session=ensureSession();session.messages.push({role:'user',text});session.updated=now().toISOString();care?.clearComposer();typing=true;save();render();
-    replyTimer=setTimeout(()=>{session.messages.push(faqAnswer(text));typing=false;save();if(view==='chat')renderChat();},550);
+    replyTimer=setTimeout(()=>{const answer=faqAnswer(text);answer.suggestedQuestions=questionSuggestions(text);session.messages.push(answer);typing=false;save();if(view==='chat')renderChat();},550);
+  }
+  let paymentPageActive=false,paymentPageStack=[],paymentPageFocus=null;
+  function renderPaymentPage(title,body,footer='',kind='payment'){
+    if(!paymentPageActive){
+      care.beforeNavigate();closeModal();paymentPageActive=true;paymentPageFocus=document.activeElement;
+      $('#device').classList.add('assistant-payment-page-active');
+      window.parent.postMessage({type:'mianbao-payment-page-state',open:true},location.origin);
+    }
+    const entry={title,body,footer,kind,orderId:selectedOrderId,scrollTop:0};
+    if(paymentPageStack.length)paymentPageStack.at(-1).scrollTop=$('#assistantPaymentPage .assistant-payment-body')?.scrollTop||0;
+    if(kind==='success'||(kind==='payment'&&paymentPageStack.at(-1)?.kind==='success'))paymentPageStack=[];
+    if(paymentPageStack.at(-1)?.kind===kind)paymentPageStack[paymentPageStack.length-1]=entry;else paymentPageStack.push(entry);
+    paintPaymentPage(entry);
+  }
+  function paintPaymentPage(entry){
+    const page=$('#assistantPaymentPage');page.hidden=false;
+    page.innerHTML=`<header class="assistant-payment-header"><button type="button" data-payment-page-back aria-label="返回">${icon('back')}</button><h2 tabindex="-1">${esc(entry.title)}</h2></header><div class="assistant-payment-body sheet-body">${entry.body}</div>${entry.footer?`<footer class="assistant-payment-footer">${entry.footer}</footer>`:''}`;
+    page.querySelector('.assistant-payment-body').scrollTop=entry.scrollTop||0;
+    page.querySelector('h2').focus({preventScroll:true});
+  }
+  function closePaymentPage(){
+    if(!paymentPageActive)return;
+    paymentPageActive=false;paymentPageStack=[];pendingDraft=null;
+    $('#assistantPaymentPage').hidden=true;$('#assistantPaymentPage').innerHTML='';$('#device').classList.remove('assistant-payment-page-active');
+    window.parent.postMessage({type:'mianbao-payment-page-state',open:false},location.origin);
+    render();if(paymentPageFocus?.isConnected)paymentPageFocus.focus({preventScroll:true});paymentPageFocus=null;
+  }
+  function backPaymentPage(){
+    if(paymentPageStack.length<2)return closePaymentPage();
+    paymentPageStack.pop();const entry=paymentPageStack.at(-1);selectedOrderId=entry.orderId;
+    if(entry.kind==='payment'){if(selectedOrderId)openOrder();else openEmptyPayment();}else paintPaymentPage(entry);
   }
   function openSheet(title,body,footer='',kind='generic'){
+    if(paymentPageActive)return renderPaymentPage(title,body,footer,kind);
+    if(assistantWorkflowMode==='payment')return renderAssistantWorkflow(title,body,footer,'payment');
     return care.openPanel(title,body,footer,kind);
   }
-  function closeModal(){modalKind='';$('#modalRoot').innerHTML='';if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});lastFocus=null;}
+  function closeModal(){if(!closeAssistantWorkflow())return;modalKind='';$('#modalRoot').innerHTML='';if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});lastFocus=null;}
   function openPayment(orderId){
+    if(!paymentPageActive){care.beforeNavigate();closeModal();renderPaymentPage('创新支付','','','payment');}
     if(orderId){selectedOrderId=orderId;return openOrder();}
-    if(state.enrollment==='enrollReview'){showToast('已收到您的资料，正在加急审核中，请耐心等待');return;}
-    if(!patientEnrolled())return care.beginEnrollment();
+    if(state.enrollment==='enrollReview'){paymentPageStack=[];return openSheet('创新支付入组进度',`<div class="empty-state"><div class="empty-icon">${icon('shield')}</div><h4>入组资料审核中</h4><p>已收到您的资料，请耐心等待审核结果。</p></div>`,'','enrollmentReview');}
+    if(!patientEnrolled()){paymentPageStack=[];return openEnrollment();}
     const orders=visibleOrders();selectedOrderId=orders.at(-1)?.id;
     if(!orders.length)return openEmptyPayment();
     openOrder();
@@ -223,7 +383,7 @@
   }
   function renderApplicationForm(){
     const d=pendingDraft;
-    openSheet(d.kind==='reupload'?'重新上传申请材料':'申请创新支付福利',`<div class="form-banner">${d.kind==='reupload'?'请补充清晰完整的材料后重新提交。':'选择申请方式，并提交演示凭证。提交后可在进度卡查看审核情况。'}</div><form id="applicationForm" novalidate><label class="form-field"><span>申请方式</span><select name="paymentType"><option value="direct" ${d.type==='direct'?'selected':''}>直付 · 在签约药房使用</option><option value="reimburse" ${d.type==='reimburse'?'selected':''}>后报销 · 提交发票申请</option></select></label><label class="form-field"><span>申请人</span><input value="${esc(mask(state.patient.name))}" readonly></label>${d.type==='direct'?'<label class="form-field"><span>签约药房</span><select name="pharmacy"><option>益康专业药房 · 静安店（演示）</option><option>惠民大药房 · 徐汇店（演示）</option></select></label><label class="form-field"><span>用药数量 *</span><input name="quantity" type="number" min="1" max="99" value="1"></label>':'<label class="form-field"><span>收款银行</span><input value="演示银行" readonly></label><label class="form-field"><span>收款账户</span><input value="6225 **** **** 1938（演示）" readonly></label>'}<label class="form-field"><span>处方材料 *</span><label class="upload-box">${icon('upload')}<span id="rxUploadLabel">${d.rx?'示例处方材料已就绪':'上传演示图片，或使用示例处方'}</span><input name="rxFile" type="file" accept="image/*"></label></label>${d.type==='reimburse'?`<label class="form-field"><span>发票材料 *</span><label class="upload-box">${icon('upload')}<span id="invoiceUploadLabel">${d.invoice?'示例发票材料已就绪':'上传演示发票，或使用示例材料'}</span><input name="invoiceFile" type="file" accept="image/*"></label></label>`:''}<button class="secondary-button" type="button" data-action="sampleAll">使用全部示例材料</button><label class="consent"><input type="checkbox" name="consent">我了解本次操作仅模拟申请流程，不发生实际支付或理赔。</label><div id="formErrors" role="alert"></div></form>`,`<button class="primary-button" data-submit="applicationForm">${d.kind==='reupload'?'重新提交申请':'提交福利申请'}</button>`,'apply');
+    openSheet(d.entryFromImage==='claim'?'申请理赔':d.entryFromImage==='benefit'?'患者福利申请':d.kind==='reupload'?'重新上传申请材料':'申请创新支付福利',`<div class="form-banner">${d.kind==='reupload'?'请补充清晰完整的材料后重新提交。':'选择申请方式，并提交演示凭证。提交后可在进度卡查看审核情况。'}</div><form id="applicationForm" novalidate><label class="form-field"><span>申请方式</span><select name="paymentType">${d.entryFromImage==='claim'?'':`<option value="direct" ${d.type==='direct'?'selected':''}>直付 · 在签约药房使用</option>`}<option value="reimburse" ${d.type==='reimburse'?'selected':''}>后报销 · 提交发票申请</option></select></label><label class="form-field"><span>申请人</span><input value="${esc(mask(state.patient.name))}" readonly></label>${d.type==='direct'?'<label class="form-field"><span>签约药房</span><select name="pharmacy"><option>益康专业药房 · 静安店（演示）</option><option>惠民大药房 · 徐汇店（演示）</option></select></label><label class="form-field"><span>用药数量 *</span><input name="quantity" type="number" min="1" max="99" value="1"></label>':'<label class="form-field"><span>收款银行</span><input value="演示银行" readonly></label><label class="form-field"><span>收款账户</span><input value="6225 **** **** 1938（演示）" readonly></label>'}<label class="form-field"><span>处方材料 *</span><label class="upload-box">${icon('upload')}<span id="rxUploadLabel">${d.rx?'示例处方材料已就绪':'上传演示图片，或使用示例处方'}</span><input name="rxFile" type="file" accept="image/*"></label></label>${d.type==='reimburse'?`<label class="form-field"><span>发票材料 *</span><label class="upload-box">${icon('upload')}<span id="invoiceUploadLabel">${d.invoice?'示例发票材料已就绪':'上传演示发票，或使用示例材料'}</span><input name="invoiceFile" type="file" accept="image/*"></label></label>`:''}<button class="secondary-button" type="button" data-action="sampleAll">使用全部示例材料</button><label class="consent"><input type="checkbox" name="consent">我了解本次操作仅模拟申请流程，不发生实际支付或理赔。</label><div id="formErrors" role="alert"></div></form>`,`<button class="primary-button" data-submit="applicationForm">${d.kind==='reupload'?'重新提交申请':'提交福利申请'}</button>`,'apply');
   }
   function handleForm(id){
     const form=$('#'+id);if(!form)return;const fd=new FormData(form);let errors=[];
@@ -240,12 +400,13 @@
       state.patient={name:String(fd.get('patientName')).trim(),age:Number(fd.get('age')),gender:String(fd.get('gender'))};state.enrollment='enrollReview';save();render();
       openSheet('入组资料已提交',`<div class="success-view"><div class="success-illustration">${icon('check')}</div><h4>资料已收到</h4><p>您的入组资料已进入审核流程。<br>审核结果可在首页进度卡查看。</p></div>`,`<button class="primary-button" data-action="done">返回查看进度</button>`,'success');
     }else{
+      const before=JSON.parse(JSON.stringify(state)),oldSelected=selectedOrderId;
       const d=pendingDraft;let o;
       if(d.kind==='reupload')o=state.orders.find(o=>o.id===selectedOrderId);
       if(!o){o={id:'PAP-DEMO-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),date:now().toISOString(),name:state.patient.name,type:d.type,code:'10'};state.orders.push(o);}
       Object.assign(o,{code:'10',date:now().toISOString(),type:d.type,rx:d.rx,invoice:d.invoice,quantity:Number(fd.get('quantity'))||1});
       // When an older rejected order is resubmitted, it becomes the latest order.
-      state.orders=state.orders.filter(v=>v.id!==o.id).concat(o);state.enrollment='orderReview';state.type=d.type;state.code='10';selectedOrderId=o.id;save();render();
+      state.orders=state.orders.filter(v=>v.id!==o.id).concat(o);state.enrollment='orderReview';state.type=d.type;state.code='10';selectedOrderId=o.id;if(!save()){state=before;selectedOrderId=oldSelected;$('#formErrors').innerHTML='<p class="form-error">申请保存失败，填写内容已保留，请重试。</p>';return;}render();
       openSheet('福利申请已提交',`<div class="success-view"><div class="success-illustration">${icon('check')}</div><h4>申请已收到，正在审核</h4><p>您可以随时在进度卡或福利关爱记录<br>查看本次申请的最新状态。</p></div><div class="detail-card"><div class="detail-row"><span>订单编号</span><span>${esc(o.id)}</span></div><div class="detail-row"><span>申请方式</span><span>${d.type==='direct'?'直付':'后报销'}</span></div></div>`,`<button class="primary-button" data-action="submittedOrder">查看申请详情</button>`,'success');
     }
   }
@@ -272,13 +433,16 @@
     const items=pharmacyItems();openSheet('查询直付药房',`<div class="map-toolbar"><select id="citySelect" aria-label="选择城市">${['上海','北京','杭州'].map(c=>`<option ${c===currentCity?'selected':''}>${c}</option>`).join('')}</select><input id="pharmacySearch" value="${esc(pharmacyQuery)}" placeholder="搜索药房名称或地址" aria-label="搜索药房"></div><div class="map-canvas" id="mapCanvas">${mapMarkup(items)}</div><div id="pharmacyList">${pharmacyList(items)}</div>`,'','pharmacy');
   }
   function refreshPharmacy(){const items=pharmacyItems();$('#mapCanvas').innerHTML=mapMarkup(items);$('#pharmacyList').innerHTML=pharmacyList(items);}
-  function openCall(pharmacy=false){openSheet(pharmacy?'联系演示药房':'真人客服',`<div class="call-content"><div class="call-circle">${icon('phone')}</div><h4>${pharmacy?'药房电话尚未配置':'400客服热线待配置'}</h4><p>${pharmacy?'正式版本会使用后台维护的药房电话。':'正式版本点击后将唤起系统默认拨号功能。'}<br>本演示不拨打真实电话。</p></div>`,`<button class="primary-button" data-action="simulateCall">模拟唤起系统拨号</button>`,'call');}
+  function openCall(pharmacy=false){
+    if(!pharmacy)return openSheet('企业微信客服',`<section class="assistant-wecom-card"><div class="assistant-wecom-heading"><img src="assets/mianbao-doctor.webp" alt="眠宝"><div><h3>添加企业微信客服</h3><p>眠宝陪您一起，把问题说清楚</p></div></div><div class="assistant-wecom-qr"><img src="assets/wecom-qr-placeholder.svg" alt="企业微信客服二维码示意图"><span>二维码示意图</span></div><p class="assistant-wecom-hint">添加客服，获取患者福利与使用帮助</p></section>`,'','customerService');
+openSheet(pharmacy?'联系演示药房':'真人客服',`<div class="call-content"><div class="call-circle">${icon('phone')}</div><h4>${pharmacy?'药房电话尚未配置':'400客服热线待配置'}</h4><p>${pharmacy?'正式版本会使用后台维护的药房电话。':'正式版本点击后将唤起系统默认拨号功能。'}<br>本演示不拨打真实电话。</p></div>`,`<button class="primary-button" data-action="simulateCall">模拟唤起系统拨号</button>`,'call');}
   function actions(name,el){
-    const map={payment:()=>openPayment(),myService:openService,pharmacy:()=>care.openRecords(),orderPharmacy:()=>{showToast('取药药房及联系方式请查看当前订单信息');},records:()=>care.openRecords(),recordJourney:()=>care.beginRecord(),medications:()=>care.openMedications(),newMedication:()=>care.beginMedication(),education:()=>care.showEducation(),call:()=>openCall(),pharmacyCall:()=>openCall(true),enroll:()=>care.beginEnrollment(),apply:()=>care.beginAid(false),reupload:()=>care.beginAid(true),newChat:()=>{if(typing)return showToast('请等待当前回复完成');care?.beforeNavigate();ensureSession(true);view='chat';save();render();$('#chatInput').focus();},loadMore:()=>{historyLimit+=3;care.openPanel('我的服务',serviceMarkup(),'','service');},sampleRx:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('diagnosis'));$('#rxUploadLabel').textContent='示例诊断材料已就绪';},sampleAll:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('prescription'));pendingDraft.invoice='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('invoice'));$('#rxUploadLabel').textContent='示例处方材料已就绪';if($('#invoiceUploadLabel'))$('#invoiceUploadLabel').textContent='示例发票材料已就绪';},done:()=>care.collapsePanel(el.closest('[data-panel-id]')?.dataset.panelId),submittedOrder:openOrder,backToOrder:openOrder,simulateCall:()=>{showToast('已模拟唤起系统拨号，未拨打真实电话');closeModal();},locate:()=>{currentCity='上海';pharmacyQuery='';selectedPharmacy='p1';openPharmacy();showToast('已使用上海演示位置，未获取设备定位');}};
+    const map={payment:()=>openPayment(),myService:openService,pharmacy:()=>care.openRecords(),orderPharmacy:()=>{showToast('取药药房及联系方式请查看当前订单信息');},records:()=>care.openRecords(),recordJourney:()=>openNativeJourney(),medications:()=>openNativeMedication(),newMedication:()=>openNativeMedication(),education:()=>care.showEducation(),call:()=>openCall(),pharmacyCall:()=>openCall(true),enroll:()=>paymentPageActive?openEnrollment():care.beginEnrollment(),apply:()=>{if(!paymentPageActive)return care.beginAid(false);const block=aidBlock(false);if(block)return showToast(block);openApplication(false)},reupload:()=>{if(!paymentPageActive)return care.beginAid(true);const block=aidBlock(true);if(block)return showToast(block);openApplication(true)},newChat:()=>{if(typing)return showToast('请等待当前回复完成');care?.beforeNavigate();ensureSession(true);view='chat';save();render();$('#chatInput').focus();},loadMore:()=>{historyLimit+=3;care.openPanel('我的服务',serviceMarkup(),'','service');},sampleRx:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('diagnosis'));$('#rxUploadLabel').textContent='示例诊断材料已就绪';},sampleAll:()=>{pendingDraft.rx='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('prescription'));pendingDraft.invoice='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(documentSvg('invoice'));$('#rxUploadLabel').textContent='示例处方材料已就绪';if($('#invoiceUploadLabel'))$('#invoiceUploadLabel').textContent='示例发票材料已就绪';},done:()=>paymentPageActive?openPayment():care.collapsePanel(el.closest('[data-panel-id]')?.dataset.panelId),submittedOrder:openOrder,backToOrder:openOrder,simulateCall:()=>{showToast('已模拟唤起系统拨号，未拨打真实电话');closeModal();},locate:()=>{currentCity='上海';pharmacyQuery='';selectedPharmacy='p1';openPharmacy();showToast('已使用上海演示位置，未获取设备定位');}};
     map[name]?.();
   }
   document.addEventListener('click',e=>{
     const el=e.target.closest('button,[data-dismiss]');if(!el)return;
+    if(el.hasAttribute('data-payment-page-back')){backPaymentPage();return;}
     if(el.dataset.dismiss){closeModal();return;}
     if(el.dataset.action)actions(el.dataset.action,el);
     if(el.dataset.question)sendQuestion(el.dataset.question);
@@ -327,13 +491,22 @@
   $('#profileButton').addEventListener('click',openService);
   $('.send-button').innerHTML=icon('send');
   $('#paymentFloat').addEventListener('click',()=>openPayment());
-  $('#clearChatButton').addEventListener('click',()=>{care.clearChats();clearTimeout(replyTimer);typing=false;state.sessions=[];activeSession=null;view='home';$('#chatInput').value='';save();render();$('#appBody').scrollTop=0;showToast('聊天记录已清空');});
+  function clearChatHistory(){
+    if(assistantMediaBusy){showToast('病程正在保存，请稍后再清空');return false;}
+    const previous=JSON.parse(JSON.stringify(state));
+    care.clearChats();state.sessions=[];
+    if(!save()){state=previous;render();return false;}
+    assistantMediaRevision++;clearTimeout(replyTimer);replyTimer=null;typing=false;activeSession=null;view='home';historyLimit=3;$('#chatInput').value='';
+    closePaymentPage();closeModal();if(mobilePanelOverlay)closeMobilePanel();render();$('#appBody').scrollTop=0;showToast('聊天记录已清空');return true;
+  }
+  window.clearMianbaoChatHistory=clearChatHistory;
+  $('#clearChatButton').addEventListener('click',clearChatHistory);
   $('#resetButton').addEventListener('click',()=>{if(mobilePanelOverlay)closeMobilePanel();openSheet('重置演示数据',`<div class="call-content"><h4>恢复初始演示场景？</h4><p>本浏览器中新增的会话、申请、病程、用药和事件记录将被清除，左侧说明会保留。</p></div>`,`<div class="button-row"><button class="secondary-button" data-action="done">保留数据</button><button class="primary-button" id="confirmReset">重置演示</button></div>`,'reset');});
   document.addEventListener('click',async e=>{if(e.target.id==='confirmReset'){e.target.disabled=true;await care?.reset();clearTimeout(replyTimer);typing=false;state=initialState();activeSession=null;view='home';save();closeModal();if(mobilePanelOverlay)closeMobilePanel();render();showToast('演示数据已重置');}});
   function closeMobilePanel(){if(!mobilePanelOverlay)return;$('.mobile-panel-close')?.remove();$('.desktop-layout').append($('#demoPanel'));mobilePanelOverlay.remove();mobilePanelOverlay=null;}
-  $('#mobileDemoButton').addEventListener('click',()=>{closeModal();mobilePanelOverlay=document.createElement('div');mobilePanelOverlay.className='mobile-panel-overlay';const panel=$('#demoPanel');mobilePanelOverlay.append(panel);const close=document.createElement('button');close.className='mobile-panel-close';close.textContent='关闭演示场景';close.addEventListener('click',closeMobilePanel);panel.append(close);close.addEventListener('click',()=>close.remove());$('#device').append(mobilePanelOverlay);mobilePanelOverlay.addEventListener('click',e=>{if(e.target===mobilePanelOverlay){close.remove();closeMobilePanel();}});});
+  $('#mobileDemoButton')?.addEventListener('click',()=>{closeModal();mobilePanelOverlay=document.createElement('div');mobilePanelOverlay.className='mobile-panel-overlay';const panel=$('#demoPanel');mobilePanelOverlay.append(panel);const close=document.createElement('button');close.className='mobile-panel-close';close.textContent='关闭演示场景';close.addEventListener('click',closeMobilePanel);panel.append(close);close.addEventListener('click',()=>close.remove());$('#device').append(mobilePanelOverlay);mobilePanelOverlay.addEventListener('click',e=>{if(e.target===mobilePanelOverlay){close.remove();closeMobilePanel();}});});
   document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){if(mobilePanelOverlay)closeMobilePanel();else if(modalKind==='doc')openOrder();else closeModal();}
+    if(e.key==='Escape'){if(paymentPageActive){backPaymentPage();return;}if(mobilePanelOverlay)closeMobilePanel();else if(modalKind==='doc')openOrder();else closeModal();}
     if(e.key==='Tab'&&(modalKind||mobilePanelOverlay)){const list=$$('button:not(:disabled),input:not([type="file"]),select,textarea,a[href]',mobilePanelOverlay||$('#modalRoot')).filter(el=>el.getClientRects().length);if(!list.length)return;const first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
   });
   care=window.createCareExperience({
@@ -341,7 +514,7 @@
     session:()=>ensureSession(),save,render,renderChat,esc,icon,showToast,closeModal,openSheet,
     changeView:()=>{view='chat';render();},
     setSession:id=>{activeSession=id;view='chat';},
-    documentSvg,parseIdentity,aidBlock,
+    documentSvg,parseIdentity,aidBlock,openNativeJourney,
     submitEnrollment:v=>{const before=JSON.parse(JSON.stringify(state));state.patient={name:v.name,age:v.age,gender:v.gender};state.enrollment='enrollReview';if(!save()){state=before;return false;}return true;},
     submitAid:(flow)=>{
       if(aidBlock(flow.reupload,flow.orderId))return null;const before=JSON.parse(JSON.stringify(state));const v=flow.values;

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#e9f2ff" />
   <title>发作性睡病之家</title>
-  <link rel="stylesheet" href="styles.css?v=home-voice-overlay-20261124" />
-  <link rel="stylesheet" href="home-companion.css?v=home-voice-overlay-20261124" />
+  <link rel="stylesheet" href="styles.css?v=home-float-right-20261124" />
+  <link rel="stylesheet" href="home-companion.css?v=home-float-right-20261124" />
 </head>
 <body>
   <aside id="requirement-panel" class="requirement-panel" aria-label="当前页面需求描述" aria-live="polite"></aside>
@@ -41,7 +41,7 @@
       "新眠宝与气泡悬浮于原页面上层，原首页DOM、卡片高度及Banner/专区位置保持不变。",
       "语音不跳页，当前首页蒙层长按、松开后自动整理保存并提示成功；取消和失败不误报成功。"
     ],
-    "data": "APP_NAME；顶部标题与问候为静态展示字段。\nhasPatientArchive()：patientArchive.diagnosisDate && currentDrugs；onboardingPending；目标patientArchive。\n当前字段补齐：insuranceStatus、meds[].day、homePreviewState。\n建议申请字段（待确认）：applicationId、applicationStatus、benefitStatus、updatedAt、rejectReason。\nhomeBanners[]：title、text、action、target、theme；bannerStates.home：index。\njourney、pharmacy、shop、payment、medReminder、specialist。\n角标来自paymentSummary().label；insuranceStatus=unclaimed/reviewing/applied/claimed/rejected。\njourney/journeyHistory；journeyRecords[]、journeyDrafts；旧 voiceCases/documentCases 兼容读取。\nmoods[本地日期]：四档状态之一。\n建议正式字段（待确认）：userId、recordDate、moodCode、createdAt、updatedAt；recordDate 按选定业务时区生成。\nhomeCompanionVisit：wasHome、day、stage(archive/medication/voice/idle)、afterArchive；仅运行时使用。homeGuide写入原业务存储。 DOM：#home-companion-layer为.device的独立子节点；position:absolute，left=12px，bottom=82px+安全区，z-index=10，处于主页面之上、弹窗之下。资源assets/mianbao-guide-floating.png。\nmeds[]：id、time、day、status=taken、usingMedication=true、drugName、note、source=home-companion、recordedAt。homeGuide.medicationResponses[]：id、usingMedication、time、day、medicationId。homeMedicationDraft.id为一次提交稳定ID。\nhomeGuide.voiceAskedDay；homeGuide.inlineVoiceDraft{record,referenceAt,durationMs,legacyKey,updatedAt}；homeVoiceCapture.phase=idle/recording/processing/error；独立稳定record.id=home-inline-voice-UUID；journeyRecords[].source=home-companion-voice。",
+    "data": "APP_NAME；顶部标题与问候为静态展示字段。\nhasPatientArchive()：patientArchive.diagnosisDate && currentDrugs；onboardingPending；目标patientArchive。\n当前字段补齐：insuranceStatus、meds[].day、homePreviewState。\n建议申请字段（待确认）：applicationId、applicationStatus、benefitStatus、updatedAt、rejectReason。\nhomeBanners[]：title、text、action、target、theme；bannerStates.home：index。\njourney、pharmacy、shop、payment、medReminder、specialist。\n角标来自paymentSummary().label；insuranceStatus=unclaimed/reviewing/applied/claimed/rejected。\njourney/journeyHistory；journeyRecords[]、journeyDrafts；旧 voiceCases/documentCases 兼容读取。\nmoods[本地日期]：四档状态之一。\n建议正式字段（待确认）：userId、recordDate、moodCode、createdAt、updatedAt；recordDate 按选定业务时区生成。\nhomeCompanionVisit：wasHome、day、stage(archive/medication/voice/idle)、afterArchive；仅运行时使用。homeGuide写入原业务存储。 DOM：#home-companion-layer为.device的独立子节点；position:absolute，right=12px（320px窄屏10px），bottom=82px+安全区，z-index=10，处于主页面之上、弹窗之下。资源assets/mianbao-guide-floating.png。\nmeds[]：id、time、day、status=taken、usingMedication=true、drugName、note、source=home-companion、recordedAt。homeGuide.medicationResponses[]：id、usingMedication、time、day、medicationId。homeMedicationDraft.id为一次提交稳定ID。\nhomeGuide.voiceAskedDay；homeGuide.inlineVoiceDraft{record,referenceAt,durationMs,legacyKey,updatedAt}；homeVoiceCapture.phase=idle/recording/processing/error；独立稳定record.id=home-inline-voice-UUID；journeyRecords[].source=home-companion-voice。",
     "pending": "正式药品名、任务计划、消息提醒和外部服务入口需业务方确认。",
     "logic": "原首页布局、标题、卡片、Banner、专区及原眠宝展示交互保持原样。新增引导由独立悬浮组件承载，不插入原页面文档流。\n没有有效档案优先显示建档气泡。稍后再说仅结束本次首页引导，下次进入仍可询问；点击悬浮眠宝可重新展开建档气泡。点击建档进入现有两字段表单；保存成功后返回首页并进入用药询问，失败保留表单；修改已有档案按14天及当日规则重新判断。\nhomeStatus计算未领取、审核中、已领取未记录、已领取已记录四种展示态；反馈区域统一使用div，不绑定点击、跳转或弹窗。未记录文案为“今天的用药还未记录”，不再提示在本卡片操作。点击眠宝仍可切换展示态，不改写申请或用药数据。患者福利、用药记录等功能沿用NT1专区原有入口。\n今日任务区域已移除，不展示任务卡片或首页小憩倒计时；不清空已有业务数据。正式申请状态与权益文案映射仍待业务确认。\n页面顺序为顶部问候→晨起状态和眠宝权益卡→Banner→NT1专区。轮播每 5 秒循环；离开页面清除计时器，页面隐藏、轮播内有焦点或系统要求减少动态时暂停。仅更新轮播区域，不清空左侧编辑输入。\n语音病历与病程记录合并，仅保留一个病程记录入口；该页支持图片、拍照和长按语音。其余入口保留原逻辑。\n未申请显示未申请，reviewing显示审核中；applied/claimed/rejected沿用既有三态概览映射为已申请，具体已申请含义仍待业务定义。角标随状态重绘更新，不额外保存状态，不改变按钮目标。\n新建选择语音/图片，取消返回来源；有内容可切换方式补充而不丢资料。未完成记录可恢复草稿；旧图片与语音记录保留在统一历史。当前提取为Demo效果，保存后不自动生成猝倒事件或服药任务。\n同日只能提交一次；已记录时禁用四个选项。\n\n【B02/B03｜现状】四档仅更新“今天的感受”文字；权益主文案由支付和服药记录决定。当前同日一次，不可修改。\n【建议规则（待确认）】晨起记录按 userId + recordDate 唯一；误选通过“修改当日状态”覆盖原记录而非新增，保留修改时间；未选择时显示引导，已选择时显示选中项。跨日重新计算日期及可选状态。\n【待确认】是否开放修改；四档对应反馈文案与形象配置；晨起反馈与权益信息的排列关系；日期统一北京时间还是用户时区。未确认前不把晨起状态当作疾病判断。\n进入首页或从后台恢复时判断，普通晨起选择/界面重绘不重新开始本次流程。优先未建档；新建档成功强制进入用药询问；已有档案且14天无实际用药记录询问用药；有记录则判断当日语音引导。用药稍后再说本次结束、下次进入重新判断。一次只展示一个气泡，不出现两个自动建档提示。语音蒙层记录成功后继续停留首页，本次收起询问气泡；此后再进入时仍按14天与当日规则判断。气泡更新只替换悬浮层，不改写原首页结构和两侧未保存文字。原页面眠宝图片及展示操作保留。新悬浮眠宝使用拿记录本、挥手的透明背景形象；有气泡时可操作引导，无气泡时仍显示形象，可点击再次记录。页面滚动不推动悬浮层；离开首页隐藏整个组件。指针事件仅由气泡及新眠宝按钮接收，周边透明区域不拦截原页面点击。\n14天按北京时间自然日，范围为今天及前13天（含边界），范围内任意一条实际用药记录即可；不包含未来日期、明确未服用/漏服/暂停状态。兼容旧meds中的实际服药打卡。建档中的药物字段、提醒设置、未保存表单不算实际用药。\n有在用药：校验药名必填、最多200字，实际时间有效且不晚于现在，备注最多500字；主记录和本次回答一起保存。未用药：只存否定回答，不新增服药记录、不完成今日任务、不满足14天判断，下次进入仍询问。两种回答保存成功后才进入当日语音判断。保存失败回滚主记录和回答，保留字段可重试；同一弹窗使用稳定ID防止重复提交。\n关闭未保存不写业务数据。查看用药记录展示实际药名/时间/备注及独立未用药回答，两类信息不混算；NT1专区既有用药提醒入口不变。\n每天自动询问一次，稍后再说当天不重复；点击悬浮眠宝仍可随时录入。保持route=home、原滚动位置、导航和首页DOM不变。蒙层覆盖当前手机视口，原页面暂不可交互，关闭后恢复；不触发页面说明离开确认。\n按住开始，上滑70px进入取消态，松开取消；录入不足500ms不保存，满60秒自动结束并整理；Esc、指针取消或录入中进入后台均可取消本次长按。未进行有效录入不新建病程。\n有效松开后复用当前Demo转写和提取，在同一蒙层显示等待状态；自动保存原文、时间/症状/次数及描述到主病程，随后关闭蒙层并由眠宝显示记录成功3.5秒，之后收起成功气泡并保留可再次录入的形象。不跳病程页，不再要求手动确认保存。已有病程页、助手页的语音/图片流程保持原样。\n转写成功先保留独立草稿；整理或保存失败留在蒙层，显示原因及重试保存/重新录入，不冒充成功。重试复用同一ID，防止新增重复记录；主记录保存失败回滚。关闭处理中的蒙层会终止当前任务，晚到的结果不写入；已有原文草稿保留，下次打开可恢复继续保存。支持旧首页语音草稿恢复，成功后仅清理对应草稿，不覆盖普通new图片/语音草稿。",
     "modules": [
@@ -89,8 +89,8 @@
       },
       {
         "title": "眠宝询问气泡与首页状态机",
-        "description": "新增眠宝形象及提问气泡作为独立悬浮组件，位于手机页面左下侧、底部导航上方，叠在原页面上层；不占据文档流，不改变原卡片和其他区块的位置与尺寸。",
-        "fields": "homeCompanionVisit：wasHome、day、stage(archive/medication/voice/idle)、afterArchive；仅运行时使用。homeGuide写入原业务存储。 DOM：#home-companion-layer为.device的独立子节点；position:absolute，left=12px，bottom=82px+安全区，z-index=10，处于主页面之上、弹窗之下。资源assets/mianbao-guide-floating.png。",
+        "description": "新增眠宝形象及提问气泡作为独立悬浮组件，位于手机页面右下侧、底部导航上方，叠在原页面上层；不占据文档流，不改变原卡片和其他区块的位置与尺寸。",
+        "fields": "homeCompanionVisit：wasHome、day、stage(archive/medication/voice/idle)、afterArchive；仅运行时使用。homeGuide写入原业务存储。 DOM：#home-companion-layer为.device的独立子节点；position:absolute，right=12px（320px窄屏10px），bottom=82px+安全区，z-index=10，处于主页面之上、弹窗之下。资源assets/mianbao-guide-floating.png。",
         "logic": "进入首页或从后台恢复时判断，普通晨起选择/界面重绘不重新开始本次流程。优先未建档；新建档成功强制进入用药询问；已有档案且14天无实际用药记录询问用药；有记录则判断当日语音引导。用药稍后再说本次结束、下次进入重新判断。一次只展示一个气泡，不出现两个自动建档提示。语音蒙层记录成功后继续停留首页，本次收起询问气泡；此后再进入时仍按14天与当日规则判断。气泡更新只替换悬浮层，不改写原首页结构和两侧未保存文字。原页面眠宝图片及展示操作保留。新悬浮眠宝使用拿记录本、挥手的透明背景形象；有气泡时可操作引导，无气泡时仍显示形象，可点击再次记录。页面滚动不推动悬浮层；离开首页隐藏整个组件。指针事件仅由气泡及新眠宝按钮接收，周边透明区域不拦截原页面点击。"
       },
       {
@@ -106,7 +106,7 @@
         "logic": "每天自动询问一次，稍后再说当天不重复；点击悬浮眠宝仍可随时录入。保持route=home、原滚动位置、导航和首页DOM不变。蒙层覆盖当前手机视口，原页面暂不可交互，关闭后恢复；不触发页面说明离开确认。\n按住开始，上滑70px进入取消态，松开取消；录入不足500ms不保存，满60秒自动结束并整理；Esc、指针取消或录入中进入后台均可取消本次长按。未进行有效录入不新建病程。\n有效松开后复用当前Demo转写和提取，在同一蒙层显示等待状态；自动保存原文、时间/症状/次数及描述到主病程，随后关闭蒙层并由眠宝显示记录成功3.5秒，之后收起成功气泡并保留可再次录入的形象。不跳病程页，不再要求手动确认保存。已有病程页、助手页的语音/图片流程保持原样。\n转写成功先保留独立草稿；整理或保存失败留在蒙层，显示原因及重试保存/重新录入，不冒充成功。重试复用同一ID，防止新增重复记录；主记录保存失败回滚。关闭处理中的蒙层会终止当前任务，晚到的结果不写入；已有原文草稿保留，下次打开可恢复继续保存。支持旧首页语音草稿恢复，成功后仅清理对应草稿，不覆盖普通new图片/语音草稿。"
       }
     ],
-    "updatedAt": "2026-11-24T05:52:57.148677+00:00"
+    "updatedAt": "2026-11-24T07:14:51.092312+00:00"
   },
   "special": {
     "title": "发作性睡病专区",
@@ -1554,12 +1554,12 @@
   }
 }
 </script>
-  <script src="requirements.js?v=home-voice-overlay-20261124"></script>
-  <script src="modules.js?v=home-voice-overlay-20261124"></script>
-  <script src="knowledge.js?v=home-voice-overlay-20261124"></script>
-  <script src="journey-records.js?v=home-voice-overlay-20261124"></script>
-  <script src="home-companion.js?v=home-voice-overlay-20261124"></script>
-  <script src="home-voice-overlay.js?v=home-voice-overlay-20261124"></script>
-  <script src="app.js?v=home-voice-overlay-20261124"></script>
+  <script src="requirements.js?v=home-float-right-20261124"></script>
+  <script src="modules.js?v=home-float-right-20261124"></script>
+  <script src="knowledge.js?v=home-float-right-20261124"></script>
+  <script src="journey-records.js?v=home-float-right-20261124"></script>
+  <script src="home-companion.js?v=home-float-right-20261124"></script>
+  <script src="home-voice-overlay.js?v=home-float-right-20261124"></script>
+  <script src="app.js?v=home-float-right-20261124"></script>
 </body>
 </html>

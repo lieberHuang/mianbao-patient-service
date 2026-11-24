@@ -81,10 +81,18 @@
 
 本次仅本地修改，两个GitHub版本均未同步。预览：http://127.0.0.1:8766/?v=home-voice-overlay-20261124
 
+## 2026-11-24发布状态
+
+上述首页悬浮引导和原地语音蒙层已发布至https://lieberhuang.github.io/mianbao-patient-service/。带两侧说明版本的固定主地址保持不变；无侧栏独立演示副本本次未同步。
+
+## 悬浮组件位置（2026-11-24）
+
+悬浮眠宝和气泡移至页面右下侧，气泡尖角及形象同步右对齐。原首页布局、用药引导及原地语音蒙层不变。此位置调整仅本地生效，尚未同步GitHub。
+
 ## 在线版保存方式
 
 根目录为 GitHub Pages 静态网站。患者记录、左侧说明与右侧修改意见保存在当前设备浏览器，不跨设备同步，不写回 GitHub。local-preview/ 保留完整本地项目及写回 HTML 的服务。
 
 ## 2026-11-24发布方式
 
-主入口固定为 https://lieberhuang.github.io/mianbao-patient-service/ 。本次静态资源位于 releases/20261124-eec76c0543de/，保留此前资源，避免新旧缓存混用。
+主入口固定为 https://lieberhuang.github.io/mianbao-patient-service/ 。本次静态资源位于 releases/20261124-ba4a08201329/，保留此前资源，避免新旧缓存混用。
